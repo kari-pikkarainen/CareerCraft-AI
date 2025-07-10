@@ -18,6 +18,7 @@ from fastapi.openapi.utils import get_openapi
 from config import get_config, validate_config, ConfigurationError, RateLimiter
 from api.middleware import AuthenticationMiddleware
 from api.auth import router as auth_router
+from api.files import router as files_router
 
 # Configure logging
 logging.basicConfig(
@@ -415,8 +416,9 @@ async def liveness_check() -> Dict[str, Any]:
     }
 
 
-# Include authentication router
+# Include routers
 app.include_router(auth_router)
+app.include_router(files_router)
 
 
 # Root endpoint
