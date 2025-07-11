@@ -108,7 +108,19 @@ const AnalysisPage: React.FC = () => {
       // Simulate analysis start
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      console.log('Starting analysis with:', analysisData);
+      // Save analysis data to session storage for progress page
+      if (analysisData.resume && analysisData.jobDescription) {
+        const progressData = {
+          jobTitle: analysisData.jobDescription.jobTitle,
+          companyName: analysisData.jobDescription.companyName,
+          resumeFileName: analysisData.resume.name,
+          jobDescription: analysisData.jobDescription.jobDescription,
+          analysisId: 'analysis-' + Date.now(),
+        };
+        
+        sessionStorage.setItem('analysisData', JSON.stringify(progressData));
+        console.log('Starting analysis with:', progressData);
+      }
       
       // Navigate to progress page
       window.location.href = '/local/progress';

@@ -1,0 +1,372 @@
+/**
+ * Workflow Test Component Styles
+ * End-to-end testing interface
+ * 
+ * CareerCraft AI - Proprietary Software
+ * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ */
+
+.workflow-test {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--surface-color, #ffffff);
+  min-height: 100vh;
+}
+
+/* Header */
+.test-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+}
+
+.test-header h1 {
+  color: var(--text-primary, #2d3748);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.test-header p {
+  color: var(--text-secondary, #718096);
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+/* Test Summary */
+.test-summary {
+  background: var(--surface-hover, #f7fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--border-radius, 12px);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color, #3182ce);
+  line-height: 1;
+}
+
+.stat-label {
+  color: var(--text-secondary, #718096);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+/* Progress Bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--border-color, #e2e8f0);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color, #3182ce), var(--success-color, #38a169));
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Test Actions */
+.test-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Current Test */
+.current-test {
+  background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.1);
+  border: 1px solid rgba(var(--primary-color-rgb, 49, 130, 206), 0.2);
+  border-radius: var(--border-radius, 12px);
+  padding: 1rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.1); }
+  50% { background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.15); }
+}
+
+.test-spinner {
+  font-size: 1.25rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Test Suites */
+.test-suites {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.test-suite {
+  background: var(--surface-color, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--border-radius, 12px);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+.suite-header {
+  background: var(--surface-hover, #f7fafc);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.suite-header h2 {
+  color: var(--text-primary, #2d3748);
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Test Steps */
+.test-steps {
+  padding: 1rem;
+}
+
+.test-step {
+  padding: 1rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--border-radius-sm, 6px);
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+}
+
+.test-step:last-child {
+  margin-bottom: 0;
+}
+
+.test-step.pending {
+  background: var(--surface-color, #ffffff);
+}
+
+.test-step.running {
+  background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.05);
+  border-color: var(--primary-color, #3182ce);
+}
+
+.test-step.passed {
+  background: rgba(var(--success-color-rgb, 56, 161, 105), 0.05);
+  border-color: var(--success-color, #38a169);
+}
+
+.test-step.failed {
+  background: rgba(var(--error-color-rgb, 229, 62, 62), 0.05);
+  border-color: var(--error-color, #e53e3e);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.step-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.step-name {
+  flex: 1;
+  color: var(--text-primary, #2d3748);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.step-description {
+  color: var(--text-secondary, #718096);
+  margin: 0 0 1rem 0;
+  line-height: 1.5;
+  font-size: 0.875rem;
+}
+
+.step-details {
+  background: rgba(var(--success-color-rgb, 56, 161, 105), 0.1);
+  border: 1px solid rgba(var(--success-color-rgb, 56, 161, 105), 0.2);
+  border-radius: var(--border-radius-sm, 6px);
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #718096);
+}
+
+.step-details strong {
+  color: var(--success-color, #38a169);
+}
+
+.step-error {
+  background: rgba(var(--error-color-rgb, 229, 62, 62), 0.1);
+  border: 1px solid rgba(var(--error-color-rgb, 229, 62, 62), 0.2);
+  border-radius: var(--border-radius-sm, 6px);
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #718096);
+}
+
+.step-error strong {
+  color: var(--error-color, #e53e3e);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary-color, #3182ce);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-color-dark, #2c5282);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.1));
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-secondary, #718096);
+}
+
+.btn-outline:hover {
+  background: var(--surface-hover, #f7fafc);
+  border-color: var(--primary-color, #3182ce);
+  color: var(--primary-color, #3182ce);
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}
+
+.btn-mini {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border-radius: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .workflow-test {
+    padding: 1rem;
+  }
+  
+  .test-header h1 {
+    font-size: 2rem;
+  }
+  
+  .test-header p {
+    font-size: 1rem;
+  }
+  
+  .test-summary {
+    padding: 1.5rem;
+  }
+  
+  .summary-stats {
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .test-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+  
+  .suite-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .step-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .step-name {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .workflow-test {
+    padding: 0.5rem;
+  }
+  
+  .test-summary {
+    padding: 1rem;
+  }
+  
+  .summary-stats {
+    gap: 1.5rem;
+  }
+  
+  .suite-header {
+    padding: 1rem;
+  }
+  
+  .test-steps {
+    padding: 0.5rem;
+  }
+  
+  .test-step {
+    padding: 0.75rem;
+  }
+}

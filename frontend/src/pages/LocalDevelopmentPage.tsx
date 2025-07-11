@@ -105,6 +105,14 @@ const LocalDevelopmentPage: React.FC = () => {
                   Test API Connection
                 </button>
               </div>
+              
+              <div className="action-card">
+                <h3>🧪 End-to-End Testing</h3>
+                <p>Comprehensive workflow testing and validation</p>
+                <button className="btn btn-secondary" onClick={() => window.location.href = '/local/test'}>
+                  Run Workflow Tests
+                </button>
+              </div>
             </div>
           </section>
 

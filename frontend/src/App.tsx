@@ -19,6 +19,8 @@ import ResultsPage from './pages/ResultsPage';
 import LocalDevelopmentPage from './pages/LocalDevelopmentPage';
 import LocalFileUploadPage from './pages/LocalFileUploadPage';
 import ApiTestPage from './pages/ApiTestPage';
+import ProgressPage from './pages/ProgressPage';
+import TestPage from './pages/TestPage';
 
 // Import components
 import ErrorBoundary from './components/ErrorBoundary';
@@ -84,9 +86,10 @@ const App: React.FC = () => {
               <Route path="/local" element={<LocalDevelopmentPage />} />
               <Route path="/local/analyze" element={<AnalysisPage />} />
               <Route path="/local/upload" element={<LocalFileUploadPage />} />
-              <Route path="/local/progress" element={<AnalysisPage />} />
+              <Route path="/local/progress" element={<ProgressPage />} />
               <Route path="/local/results" element={<ResultsPage />} />
               <Route path="/local/api-test" element={<ApiTestPage />} />
+              <Route path="/local/test" element={<TestPage />} />
               
               {/* Catch all - redirect to local development */}
               <Route path="*" element={<Navigate to="/local" replace />} />
