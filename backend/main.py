@@ -19,6 +19,7 @@ from config import get_config, validate_config, ConfigurationError, RateLimiter
 from api.middleware import AuthenticationMiddleware
 from api.auth import router as auth_router
 from api.files import router as files_router
+from api.analysis import router as analysis_router
 
 # Configure logging
 logging.basicConfig(
@@ -419,6 +420,7 @@ async def liveness_check() -> Dict[str, Any]:
 # Include routers
 app.include_router(auth_router)
 app.include_router(files_router)
+app.include_router(analysis_router)
 
 
 # Root endpoint
