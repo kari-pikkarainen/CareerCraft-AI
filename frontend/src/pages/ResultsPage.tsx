@@ -10,6 +10,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResultsDisplay, { AnalysisResults } from '../components/ResultsDisplay';
 import { useAnalysis } from '../contexts/AnalysisContext';
+import { AnalysisResults as ApiAnalysisResults } from '../types';
 import './ResultsPage.css';
 
 const ResultsPage: React.FC = () => {
@@ -18,6 +19,85 @@ const ResultsPage: React.FC = () => {
   const [results, setResults] = useState<AnalysisResults | null>(null);
   const [loading, setLoading] = useState(true);
   const [usingMockData, setUsingMockData] = useState(false);
+
+  // Convert API results to component format
+  const convertApiResultsToComponentFormat = (apiResults: ApiAnalysisResults): AnalysisResults => {
+    return {
+      analysisId: apiResults.session_id,
+      jobTitle: apiResults.job_analysis.job_title,
+      companyName: apiResults.job_analysis.company_name || 'Unknown Company',
+      resumeFileName: 'resume.pdf', // API doesn't return this, use placeholder
+      overallScore: Math.round(apiResults.application_strategy.overall_fit * 100),
+      completedAt: apiResults.completed_at,
+      
+      jobAnalysis: {
+        requirements: apiResults.job_analysis.requirements.map(r => r.requirement),
+        keywords: apiResults.job_analysis.key_keywords,
+        skills: apiResults.job_analysis.skills_analysis.map(s => s.skill),
+        experience: apiResults.job_analysis.experience_level || 'Not specified',
+        matchScore: Math.round(apiResults.job_analysis.analysis_score * 100),
+        insights: [] // API doesn't have direct insights, would need to generate from analysis
+      },
+      
+      companyResearch: {
+        industry: apiResults.company_research.industry || 'Unknown',
+        size: apiResults.company_research.size || 'Unknown',
+        culture: apiResults.company_research.culture_keywords.join(', ') || 'No information available',
+        values: apiResults.company_research.values || [],
+        benefits: [], // API doesn't have this field, would need to extract from insights
+        challenges: [], // API doesn't have this field
+        opportunities: [] // API doesn't have this field
+      },
+      
+      resumeAnalysis: {
+        strengths: apiResults.resume_analysis.strengths,
+        weaknesses: apiResults.resume_analysis.weaknesses,
+        missingSkills: apiResults.resume_analysis.missing_keywords,
+        recommendations: apiResults.resume_analysis.recommendations.map(r => r.description),
+        experienceMatch: Math.round(apiResults.resume_analysis.job_match_score * 100),
+        skillsMatch: Math.round(apiResults.resume_analysis.overall_score * 100)
+      },
+      
+      skillsGapAnalysis: {
+        matchingSkills: apiResults.job_analysis.skills_analysis.filter(s => s.present_in_resume).map(s => s.skill),
+        missingSkills: apiResults.job_analysis.skills_analysis.filter(s => !s.present_in_resume).map(s => s.skill),
+        partialSkills: [], // API doesn't distinguish partial skills
+        overallMatch: Math.round(apiResults.job_analysis.analysis_score * 100),
+        prioritySkills: apiResults.job_analysis.skills_analysis.filter(s => s.required && !s.present_in_resume).map(s => s.skill),
+        learningPath: [] // Would need to generate from recommendations
+      },
+      
+      resumeEnhancements: {
+        improvements: apiResults.resume_analysis.recommendations.map(r => ({
+          section: r.category,
+          suggestion: r.description,
+          impact: r.priority as 'high' | 'medium' | 'low',
+          example: r.specific_examples.length > 0 ? r.specific_examples[0] : undefined
+        })),
+        newSections: [], // Would need to analyze recommendations to extract new sections
+        keywordOptimization: apiResults.resume_analysis.recommendations.flatMap(r => r.keywords_to_add),
+        scoreImprovement: 15 // Placeholder
+      },
+      
+      coverLetter: {
+        content: apiResults.cover_letter.content,
+        tone: apiResults.cover_letter.tone,
+        keyPoints: apiResults.cover_letter.key_points,
+        customization: `High - tailored to ${apiResults.job_analysis.company_name || 'company'} values and ${apiResults.job_analysis.job_title} requirements`,
+        paragraphs: 4, // Could count from content
+        wordCount: apiResults.cover_letter.word_count
+      },
+      
+      finalReview: {
+        overallScore: Math.round(apiResults.application_strategy.overall_fit * 100),
+        strengths: apiResults.application_strategy.strengths_to_highlight,
+        improvements: apiResults.application_strategy.addressing_strategies,
+        recommendation: `Application recommended - ${Math.round(apiResults.application_strategy.overall_fit * 100)}% fit`,
+        confidence: Math.round(apiResults.application_strategy.overall_fit * 100),
+        nextSteps: apiResults.application_strategy.interview_preparation
+      }
+    };
+  };
 
   // Generate mock results data
   const generateMockResults = useCallback((): AnalysisResults => {
@@ -278,7 +358,8 @@ Sincerely,
           try {
             console.log('Attempting to load real analysis results for:', analysisId);
             const apiResults = await getResults(analysisId);
-            setResults(apiResults);
+            const convertedResults = convertApiResultsToComponentFormat(apiResults);
+            setResults(convertedResults);
             setUsingMockData(false);
             console.log('Successfully loaded real analysis results');
             return;

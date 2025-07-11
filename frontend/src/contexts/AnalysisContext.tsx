@@ -5,8 +5,7 @@ import {
   ProgressResponse, 
   AnalysisResults,
   SessionInfo,
-  JobAnalysisRequest,
-  ProcessingStatusEnum
+  JobAnalysisRequest
 } from '../types';
 import { getApiService } from '../services';
 
@@ -134,15 +133,10 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
       
       dispatch({ 
         type: 'ANALYSIS_STARTED', 
-        payload: { 
-          session_id: response.analysis_id, 
-          status: ProcessingStatusEnum.PENDING, 
-          progress: {}, 
-          estimated_completion: response.estimated_completion 
-        } 
+        payload: response
       });
       
-      return response.analysis_id;
+      return response.session_id;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to start analysis';
@@ -186,7 +180,7 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
       // Call the actual API
       const results = await apiService.getAnalysisResults(sessionId);
       
-      dispatch({ type: 'RESULTS_LOADED', payload: results });
+      dispatch({ type: 'ANALYSIS_COMPLETE', payload: results });
       
       return results;
       
