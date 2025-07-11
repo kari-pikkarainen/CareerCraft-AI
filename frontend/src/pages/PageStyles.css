@@ -1,0 +1,73 @@
+/* Common Page Styles */
+
+.page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h1 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.page-header p {
+  color: var(--text-secondary);
+  font-size: 1.125rem;
+  margin-bottom: 0;
+}
+
+.page-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.placeholder-card {
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  padding: 2rem;
+  text-align: center;
+}
+
+.placeholder-card h2 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.placeholder-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.placeholder-card ul {
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+  color: var(--text-secondary);
+}
+
+.placeholder-card li {
+  margin-bottom: 0.5rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .page-header p {
+    font-size: 1rem;
+  }
+  
+  .placeholder-card {
+    padding: 1.5rem;
+  }
+}

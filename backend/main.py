@@ -3,6 +3,11 @@ CareerCraft AI - Main FastAPI Application
 
 Entry point for the CareerCraft AI backend service.
 Provides intelligent job application assistance with secure API access.
+
+Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+
+This software is proprietary and confidential.
+Unauthorized use, distribution, or modification is strictly prohibited.
 """
 
 import logging

@@ -2,6 +2,8 @@
   "name": "careercraft-ai-frontend",
   "version": "1.0.0",
   "description": "CareerCraft AI Frontend - Intelligent Job Application Assistant",
+  "author": "Kari Pikkarainen <karipikkarainen@gmail.com>",
+  "license": "UNLICENSED",
   "private": true,
   "dependencies": {
     "@types/node": "^20.10.0",
