@@ -97,6 +97,14 @@ const LocalDevelopmentPage: React.FC = () => {
                   View Sample Results
                 </button>
               </div>
+              
+              <div className="action-card">
+                <h3>🔧 API Connection Test</h3>
+                <p>Test backend API connectivity and authentication</p>
+                <button className="btn btn-secondary" onClick={() => window.location.href = '/local/api-test'}>
+                  Test API Connection
+                </button>
+              </div>
             </div>
           </section>
 

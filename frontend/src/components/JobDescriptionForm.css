@@ -1,0 +1,430 @@
+/**
+ * Job Description Form Styles
+ * Modern, accessible form with comprehensive validation UI
+ * 
+ * CareerCraft AI - Proprietary Software
+ * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ */
+
+.job-form-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Form Structure */
+.job-description-form {
+  background: var(--surface-color, #ffffff);
+  border-radius: var(--border-radius, 12px);
+  padding: 2rem;
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+/* Form Header */
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+}
+
+.form-header h3 {
+  color: var(--text-primary, #2d3748);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.form-header p {
+  color: var(--text-secondary, #718096);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-section h4 {
+  color: var(--text-primary, #2d3748);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.section-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: 1px solid var(--primary-color, #3182ce);
+  color: var(--primary-color, #3182ce);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-sm, 6px);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  background: var(--primary-color, #3182ce);
+  color: white;
+}
+
+.toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form Fields */
+.form-field {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.form-field label {
+  display: block;
+  color: var(--text-primary, #2d3748);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.field-hint {
+  display: block;
+  color: var(--text-secondary, #718096);
+  font-weight: 400;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Input Styles */
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: var(--border-radius-sm, 6px);
+  font-size: 1rem;
+  background: var(--surface-color, #ffffff);
+  color: var(--text-primary, #2d3748);
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #3182ce);
+  box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb, 49, 130, 206), 0.1);
+}
+
+.form-field input:disabled,
+.form-field select:disabled,
+.form-field textarea:disabled {
+  background: var(--surface-disabled, #f7fafc);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Textarea Specific */
+.textarea-field {
+  position: relative;
+}
+
+.textarea-wrapper {
+  position: relative;
+}
+
+.textarea-wrapper textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.textarea-actions {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+}
+
+.btn-paste {
+  background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.1);
+  border: 1px solid rgba(var(--primary-color-rgb, 49, 130, 206), 0.2);
+  color: var(--primary-color, #3182ce);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius-sm, 6px);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-paste:hover {
+  background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.2);
+}
+
+.btn-paste:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Character Count */
+.character-count {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.character-count .insufficient {
+  color: var(--warning-color, #d69e2e);
+}
+
+.character-count .sufficient {
+  color: var(--success-color, #38a169);
+}
+
+.count-hint {
+  color: var(--text-secondary, #718096);
+  font-style: italic;
+}
+
+/* Validation States */
+.form-field.error input,
+.form-field.error select,
+.form-field.error textarea {
+  border-color: var(--error-color, #e53e3e);
+  box-shadow: 0 0 0 3px rgba(var(--error-color-rgb, 229, 62, 62), 0.1);
+}
+
+.form-field.valid input,
+.form-field.valid select,
+.form-field.valid textarea {
+  border-color: var(--success-color, #38a169);
+  box-shadow: 0 0 0 3px rgba(var(--success-color-rgb, 56, 161, 105), 0.1);
+}
+
+.form-field.valid::after {
+  content: '✓';
+  position: absolute;
+  right: 0.75rem;
+  top: 2.25rem;
+  color: var(--success-color, #38a169);
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.textarea-field.valid::after {
+  top: 3rem;
+  right: 3rem;
+}
+
+/* Error Messages */
+.error-message {
+  display: block;
+  color: var(--error-color, #e53e3e);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+/* Optional Fields */
+.optional-fields {
+  background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.02);
+  border: 1px solid rgba(var(--primary-color-rgb, 49, 130, 206), 0.1);
+  border-radius: var(--border-radius, 12px);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--border-color, #e2e8f0);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.primary-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.secondary-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius-sm, 6px);
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--primary-color, #3182ce);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-color-dark, #2c5282);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.1));
+}
+
+.btn-secondary {
+  background: var(--secondary-color, #718096);
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--secondary-color-dark, #4a5568);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-secondary, #718096);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--surface-hover, #f7fafc);
+  border-color: var(--primary-color, #3182ce);
+  color: var(--primary-color, #3182ce);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-icon {
+  font-size: 1rem;
+}
+
+.btn-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Select Field Styling */
+.form-field select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23718096' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .job-description-form {
+    padding: 1.5rem;
+  }
+  
+  .form-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  
+  .form-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .form-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .primary-actions,
+  .secondary-actions {
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .btn {
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+  
+  .section-toggle {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .toggle-btn {
+    align-self: center;
+  }
+  
+  .textarea-actions {
+    position: static;
+    margin-top: 0.5rem;
+    text-align: right;
+  }
+  
+  .textarea-field.valid::after {
+    top: 2.25rem;
+    right: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-form-container {
+    max-width: 100%;
+  }
+  
+  .job-description-form {
+    padding: 1rem;
+  }
+  
+  .optional-fields {
+    padding: 1rem;
+  }
+  
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}

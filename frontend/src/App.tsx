@@ -18,6 +18,7 @@ import AnalysisPage from './pages/AnalysisPage';
 import ResultsPage from './pages/ResultsPage';
 import LocalDevelopmentPage from './pages/LocalDevelopmentPage';
 import LocalFileUploadPage from './pages/LocalFileUploadPage';
+import ApiTestPage from './pages/ApiTestPage';
 
 // Import components
 import ErrorBoundary from './components/ErrorBoundary';
@@ -85,6 +86,7 @@ const App: React.FC = () => {
               <Route path="/local/upload" element={<LocalFileUploadPage />} />
               <Route path="/local/progress" element={<AnalysisPage />} />
               <Route path="/local/results" element={<ResultsPage />} />
+              <Route path="/local/api-test" element={<ApiTestPage />} />
               
               {/* Catch all - redirect to local development */}
               <Route path="*" element={<Navigate to="/local" replace />} />
