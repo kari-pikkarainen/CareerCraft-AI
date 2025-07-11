@@ -99,6 +99,7 @@ export interface HMACHeaders {
   'X-Timestamp': string;
   'Content-Type': string;
   'Authorization'?: string; // Bearer token for authenticated requests
+  [key: string]: string | undefined;
 }
 
 // API client configuration

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import { User, AuthState, AuthAction, LoginFormData } from '../types';
+import { getApiService, processError } from '../services';
 
 export interface AuthContextType extends AuthState {
   login: (credentials: LoginFormData) => Promise<void>;
@@ -136,17 +137,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
-      // This will be implemented when we create the API service
-      // For now, we'll create a placeholder
-      console.log('Login attempt:', credentials);
+      const apiService = getApiService();
       
-      // Placeholder response - will be replaced with actual API call
-      throw new Error('API service not yet implemented');
+      // Call authentication API
+      const authResponse = await apiService.login({
+        client_id: 'frontend-client',
+        permissions: ['read', 'write'],
+      });
+      
+      // Create user object from response
+      const user: User = {
+        id: authResponse.session_id,
+        email: credentials.email,
+        permissions: authResponse.permissions,
+        session_id: authResponse.session_id,
+        expires_at: new Date(Date.now() + authResponse.expires_in * 1000),
+      };
+      
+      // Store auth data
+      localStorage.setItem('auth_token', authResponse.access_token);
+      localStorage.setItem('auth_user', JSON.stringify(user));
+      
+      // Update state
+      dispatch({ 
+        type: 'LOGIN_SUCCESS', 
+        payload: { user, token: authResponse.access_token } 
+      });
       
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Login failed';
-      dispatch({ type: 'LOGIN_FAILURE', payload: errorMessage });
-      throw error;
+      const processedError = processError(error, { action: 'login', email: credentials.email });
+      dispatch({ type: 'LOGIN_FAILURE', payload: processedError.userMessage });
+      throw processedError;
     }
   };
 
@@ -154,8 +175,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     try {
       // Call logout API endpoint
-      // This will be implemented when we create the API service
-      console.log('Logout attempt');
+      const apiService = getApiService();
+      await apiService.logout();
       
     } catch (error) {
       console.error('Logout API call failed:', error);
@@ -177,11 +198,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('No token to refresh');
       }
 
-      // This will be implemented when we create the API service
-      console.log('Token refresh attempt');
+      const apiService = getApiService();
       
-      // Placeholder - will be replaced with actual API call
-      throw new Error('API service not yet implemented');
+      // Call token refresh API
+      const authResponse = await apiService.refreshToken({
+        refresh_token: state.token,
+      });
+      
+      // Update stored token
+      localStorage.setItem('auth_token', authResponse.access_token);
+      
+      // Update state
+      dispatch({ 
+        type: 'TOKEN_REFRESH_SUCCESS', 
+        payload: authResponse.access_token 
+      });
       
     } catch (error) {
       console.error('Token refresh failed:', error);
