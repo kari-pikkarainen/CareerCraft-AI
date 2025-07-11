@@ -9,12 +9,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ResultsDisplay, { AnalysisResults } from '../components/ResultsDisplay';
+import { useAnalysis } from '../contexts/AnalysisContext';
 import './ResultsPage.css';
 
 const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { getResults } = useAnalysis();
   const [results, setResults] = useState<AnalysisResults | null>(null);
   const [loading, setLoading] = useState(true);
+  const [usingMockData, setUsingMockData] = useState(false);
 
   // Generate mock results data
   const generateMockResults = useCallback((): AnalysisResults => {
@@ -204,13 +207,13 @@ const ResultsPage: React.FC = () => {
       coverLetter: {
         content: `Dear Hiring Manager,
 
-I am writing to express my strong interest in the Senior Software Engineer position at TechCorp Inc. With over 5 years of experience in full-stack development and a passion for building scalable, user-centric applications, I am excited about the opportunity to contribute to your innovative team.
+I am writing to express my strong interest in the ${analysisData?.jobTitle || 'Senior Software Engineer'} position at ${analysisData?.companyName || 'your company'}. With over 5 years of experience in full-stack development and a passion for building scalable, user-centric applications, I am excited about the opportunity to contribute to your innovative team.
 
-In my current role, I have led the development of several high-impact projects using React, Node.js, and cloud platforms. My experience includes architecting microservices solutions that improved system performance by 40% and implementing CI/CD pipelines that reduced deployment time by 60%. I am particularly drawn to TechCorp's commitment to innovation and would love to bring my expertise in modern web technologies to help drive your product vision forward.
+In my current role, I have led the development of several high-impact projects using React, Node.js, and cloud platforms. My experience includes architecting microservices solutions that improved system performance by 40% and implementing CI/CD pipelines that reduced deployment time by 60%. I am particularly drawn to ${analysisData?.companyName || 'your company'}'s commitment to innovation and would love to bring my expertise in modern web technologies to help drive your product vision forward.
 
 Your company's focus on work-life balance and continuous learning aligns perfectly with my values. I am eager to contribute to a culture that prioritizes both technical excellence and personal growth. My collaborative approach and experience mentoring junior developers would be valuable assets to your growing team.
 
-I would welcome the opportunity to discuss how my skills and enthusiasm can contribute to TechCorp's continued success. Thank you for considering my application.
+I would welcome the opportunity to discuss how my skills and enthusiasm can contribute to ${analysisData?.companyName || 'your company'}'s continued success. Thank you for considering my application.
 
 Sincerely,
 [Your Name]`,
@@ -221,7 +224,7 @@ Sincerely,
           'Company culture alignment emphasized',
           'Leadership experience mentioned'
         ],
-        customization: 'High - tailored to company values and role requirements',
+        customization: `High - tailored to ${analysisData?.companyName || 'company'} values and ${analysisData?.jobTitle || 'role'} requirements`,
         paragraphs: 4,
         wordCount: 247
       },
@@ -257,21 +260,53 @@ Sincerely,
   useEffect(() => {
     const loadResults = async () => {
       try {
-        // Simulate loading delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Check if we have a real analysis session ID
+        const storedData = sessionStorage.getItem('analysisData');
+        let analysisId = null;
         
-        // In a real implementation, this would fetch from API
+        if (storedData) {
+          try {
+            const parsedData = JSON.parse(storedData);
+            analysisId = parsedData.analysisId;
+          } catch (error) {
+            console.error('Failed to parse stored analysis data:', error);
+          }
+        }
+        
+        // Try to load real results first
+        if (analysisId && analysisId.startsWith('analysis-')) {
+          try {
+            console.log('Attempting to load real analysis results for:', analysisId);
+            const apiResults = await getResults(analysisId);
+            setResults(apiResults);
+            setUsingMockData(false);
+            console.log('Successfully loaded real analysis results');
+            return;
+          } catch (error) {
+            console.warn('Failed to load real results, falling back to mock data:', error);
+          }
+        }
+        
+        // Fallback to mock data
+        console.log('Using mock data for results display');
+        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate loading
         const mockResults = generateMockResults();
         setResults(mockResults);
+        setUsingMockData(true);
+        
       } catch (error) {
         console.error('Failed to load results:', error);
+        // Final fallback to mock data
+        const mockResults = generateMockResults();
+        setResults(mockResults);
+        setUsingMockData(true);
       } finally {
         setLoading(false);
       }
     };
 
     loadResults();
-  }, [generateMockResults]);
+  }, [generateMockResults, getResults]);
 
   // Handle export functionality
   const handleExport = useCallback((format: 'pdf' | 'docx' | 'json') => {
@@ -357,6 +392,21 @@ Sincerely,
           </div>
         </div>
       </header>
+
+      {/* Mock Data Banner */}
+      {usingMockData && (
+        <div className="mock-data-banner">
+          <div className="container">
+            <div className="banner-content">
+              <span className="banner-icon">⚠️</span>
+              <div className="banner-text">
+                <strong>Development Mode:</strong> This is mock data customized with your job details. 
+                Real analysis will use the Claude API to generate personalized results.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="results-main">

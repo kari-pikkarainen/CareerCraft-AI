@@ -15,10 +15,11 @@
 
 /* Header */
 .test-page-header {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   padding: 2rem 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
@@ -73,10 +74,11 @@
 
 /* Footer */
 .test-page-footer {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
   padding: 1.5rem 0;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .footer-content {

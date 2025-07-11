@@ -312,24 +312,42 @@ Format as a JSON object with specific, actionable recommendations.
         
         # Clean old entries (older than 1 minute)
         cutoff_time = current_time - 60
+        old_request_count = len(self._request_times)
+        old_token_entries = len(self._token_usage)
+        
         self._request_times = [t for t in self._request_times if t > cutoff_time]
         self._token_usage = [(t, tokens) for t, tokens in self._token_usage if t > cutoff_time]
         
+        cleaned_requests = old_request_count - len(self._request_times)
+        cleaned_tokens = old_token_entries - len(self._token_usage)
+        
+        if cleaned_requests > 0 or cleaned_tokens > 0:
+            print(f"🧹 [CLAUDE API] Cleaned old rate limit entries: {cleaned_requests} requests, {cleaned_tokens} token entries")
+        
         # Check request rate limit
-        if len(self._request_times) >= self.REQUESTS_PER_MINUTE:
+        current_requests = len(self._request_times)
+        print(f"📈 [CLAUDE API] Current rate limits: {current_requests}/{self.REQUESTS_PER_MINUTE} requests per minute")
+        
+        if current_requests >= self.REQUESTS_PER_MINUTE:
             sleep_time = 60 - (current_time - self._request_times[0])
             if sleep_time > 0:
+                print(f"⏳ [CLAUDE API] REQUEST RATE LIMIT: Sleeping for {sleep_time:.1f} seconds...")
                 logger.warning(f"Rate limit reached, sleeping for {sleep_time:.1f} seconds")
                 time.sleep(sleep_time)
+                print(f"✅ [CLAUDE API] Rate limit wait completed")
         
         # Check token rate limit
         total_tokens = sum(tokens for _, tokens in self._token_usage)
+        print(f"📈 [CLAUDE API] Current token usage: {total_tokens}/{self.TOKENS_PER_MINUTE} tokens per minute")
+        
         if total_tokens >= self.TOKENS_PER_MINUTE:
             oldest_time = self._token_usage[0][0] if self._token_usage else current_time
             sleep_time = 60 - (current_time - oldest_time)
             if sleep_time > 0:
+                print(f"⏳ [CLAUDE API] TOKEN RATE LIMIT: Sleeping for {sleep_time:.1f} seconds...")
                 logger.warning(f"Token rate limit reached, sleeping for {sleep_time:.1f} seconds")
                 time.sleep(sleep_time)
+                print(f"✅ [CLAUDE API] Token rate limit wait completed")
     
     def _record_usage(self, tokens_used: int) -> None:
         """Record API usage for rate limiting"""
@@ -352,12 +370,23 @@ Format as a JSON object with specific, actionable recommendations.
         Returns:
             AnalysisResult with structured job analysis
         """
+        print(f"\n🔍 [CLAUDE API] ==================== JOB DESCRIPTION ANALYSIS ====================")
+        print(f"📝 [CLAUDE API] Input length: {len(job_description)} characters")
+        print(f"💡 [CLAUDE API] Additional context: {'Yes' if additional_context else 'None'}")
+        
         if not job_description or len(job_description.strip()) < 50:
+            print(f"❌ [CLAUDE API] ERROR: Job description too short ({len(job_description.strip())} chars, minimum 50)")
             raise ClaudeAPIError("Job description must be at least 50 characters long")
+        
+        print(f"📋 [CLAUDE API] Preparing job analysis prompt...")
+        print(f"🎯 [CLAUDE API] Using model: {self.DEFAULT_MODEL}")
+        print(f"🔧 [CLAUDE API] Max tokens: {self.MAX_TOKENS}, Temperature: {self.TEMPERATURE}")
         
         prompt = self.prompts[PromptType.JOB_ANALYSIS].format(
             job_description=job_description
         )
+        
+        print(f"📤 [CLAUDE API] Sending request to Claude API...")
         
         return await self._make_api_call(
             prompt=prompt,
@@ -380,13 +409,24 @@ Format as a JSON object with specific, actionable recommendations.
         Returns:
             AnalysisResult with company research
         """
+        print(f"\n🏢 [CLAUDE API] ==================== COMPANY RESEARCH ====================")
+        print(f"🏆 [CLAUDE API] Company name: '{company_name}'")
+        print(f"📚 [CLAUDE API] Additional context: {'Yes' if context else 'None'}")
+        
         if not company_name or len(company_name.strip()) < 2:
+            print(f"❌ [CLAUDE API] ERROR: Company name too short ('{company_name}', minimum 2 characters)")
             raise ClaudeAPIError("Company name is required")
+        
+        print(f"📋 [CLAUDE API] Preparing company research prompt...")
+        print(f"🎯 [CLAUDE API] Using model: {self.DEFAULT_MODEL}")
+        print(f"🔧 [CLAUDE API] Max tokens: {self.MAX_TOKENS}, Temperature: {self.TEMPERATURE}")
         
         prompt = self.prompts[PromptType.COMPANY_RESEARCH].format(
             company_name=company_name,
             context=context or "No additional context provided"
         )
+        
+        print(f"📤 [CLAUDE API] Sending company research request to Claude API...")
         
         return await self._make_api_call(
             prompt=prompt,
@@ -409,16 +449,28 @@ Format as a JSON object with specific, actionable recommendations.
         Returns:
             AnalysisResult with resume analysis
         """
+        print(f"\n📄 [CLAUDE API] ==================== RESUME ANALYSIS ====================")
+        print(f"📝 [CLAUDE API] Resume content length: {len(resume_content)} characters")
+        print(f"📋 [CLAUDE API] Job requirements length: {len(job_requirements)} characters")
+        
         if not resume_content or len(resume_content.strip()) < 100:
+            print(f"❌ [CLAUDE API] ERROR: Resume content too short ({len(resume_content.strip())} chars, minimum 100)")
             raise ClaudeAPIError("Resume content must be at least 100 characters long")
         
         if not job_requirements:
+            print(f"❌ [CLAUDE API] ERROR: Job requirements are missing")
             raise ClaudeAPIError("Job requirements are required")
+        
+        print(f"📋 [CLAUDE API] Preparing resume analysis prompt...")
+        print(f"🎯 [CLAUDE API] Using model: {self.DEFAULT_MODEL}")
+        print(f"🔧 [CLAUDE API] Max tokens: {self.MAX_TOKENS}, Temperature: {self.TEMPERATURE}")
         
         prompt = self.prompts[PromptType.RESUME_ANALYSIS].format(
             resume_content=resume_content,
             job_requirements=job_requirements
         )
+        
+        print(f"📤 [CLAUDE API] Sending resume analysis request to Claude API...")
         
         return await self._make_api_call(
             prompt=prompt,
@@ -450,8 +502,19 @@ Format as a JSON object with specific, actionable recommendations.
         Returns:
             AnalysisResult with generated cover letter
         """
+        print(f"\n✉️ [CLAUDE API] ==================== COVER LETTER GENERATION ====================")
+        print(f"📝 [CLAUDE API] Job description length: {len(job_description)} characters")
+        print(f"🏢 [CLAUDE API] Company info length: {len(company_info)} characters")
+        print(f"📄 [CLAUDE API] Resume summary length: {len(resume_summary)} characters")
+        print(f"🎨 [CLAUDE API] Tone: {tone}")
+        
         focus_list = focus_areas or ["relevant experience", "technical skills"]
         focus_str = ", ".join(focus_list)
+        print(f"🎯 [CLAUDE API] Focus areas: {focus_str}")
+        
+        print(f"📋 [CLAUDE API] Preparing cover letter generation prompt...")
+        print(f"🎯 [CLAUDE API] Using model: {self.DEFAULT_MODEL}")
+        print(f"🔧 [CLAUDE API] Max tokens: {self.MAX_TOKENS}, Temperature: {self.TEMPERATURE}")
         
         prompt = self.prompts[PromptType.COVER_LETTER].format(
             job_description=job_description,
@@ -460,6 +523,8 @@ Format as a JSON object with specific, actionable recommendations.
             tone=tone,
             focus_areas=focus_str
         )
+        
+        print(f"📤 [CLAUDE API] Sending cover letter generation request to Claude API...")
         
         return await self._make_api_call(
             prompt=prompt,
@@ -487,13 +552,28 @@ Format as a JSON object with specific, actionable recommendations.
         Returns:
             AnalysisResult with skills analysis
         """
+        print(f"\n🎯 [CLAUDE API] ==================== SKILLS GAP ANALYSIS ====================")
+        print(f"🛠️ [CLAUDE API] Current skills count: {len(current_skills)}")
+        print(f"📋 [CLAUDE API] Job requirements length: {len(job_requirements)} characters")
+        print(f"🏭 [CLAUDE API] Industry: {industry}")
+        
         skills_str = ", ".join(current_skills) if current_skills else "No skills specified"
+        if current_skills:
+            print(f"🔧 [CLAUDE API] Skills preview: {skills_str[:100]}{'...' if len(skills_str) > 100 else ''}")
+        else:
+            print(f"⚠️ [CLAUDE API] WARNING: No current skills provided")
+        
+        print(f"📋 [CLAUDE API] Preparing skills gap analysis prompt...")
+        print(f"🎯 [CLAUDE API] Using model: {self.DEFAULT_MODEL}")
+        print(f"🔧 [CLAUDE API] Max tokens: {self.MAX_TOKENS}, Temperature: {self.TEMPERATURE}")
         
         prompt = self.prompts[PromptType.SKILLS_ANALYSIS].format(
             current_skills=skills_str,
             job_requirements=job_requirements,
             industry=industry
         )
+        
+        print(f"📤 [CLAUDE API] Sending skills gap analysis request to Claude API...")
         
         return await self._make_api_call(
             prompt=prompt,
@@ -521,21 +601,36 @@ Format as a JSON object with specific, actionable recommendations.
         Returns:
             AnalysisResult with API response
         """
+        print(f"\n🚀 [CLAUDE API] ==================== API CALL EXECUTION ====================")
+        print(f"💬 [CLAUDE API] Prompt type: {prompt_type.value}")
+        print(f"📝 [CLAUDE API] Prompt length: {len(prompt)} characters")
+        print(f"📈 [CLAUDE API] Context data: {list(context.keys()) if context else 'None'}")
+        
         # Check rate limits
+        print(f"🕒 [CLAUDE API] Checking rate limits...")
         self._check_rate_limits()
+        print(f"✅ [CLAUDE API] Rate limits OK - proceeding with request")
         
         start_time = time.time()
+        print(f"⏱️ [CLAUDE API] Request started at: {time.strftime('%H:%M:%S', time.localtime(start_time))}")
         
         try:
             # Prepare messages
+            print(f"📦 [CLAUDE API] Preparing message payload...")
             messages: List[MessageParam] = [
                 {
                     "role": "user",
                     "content": prompt
                 }
             ]
+            print(f"✅ [CLAUDE API] Message payload prepared successfully")
             
             # Make API call
+            print(f"🌐 [CLAUDE API] Sending request to Anthropic API...")
+            print(f"🤖 [CLAUDE API] Model: {self.DEFAULT_MODEL}")
+            print(f"🔢 [CLAUDE API] Max tokens: {self.MAX_TOKENS}")
+            print(f"🌡️ [CLAUDE API] Temperature: {self.TEMPERATURE}")
+            
             response = await self.async_client.messages.create(
                 model=self.DEFAULT_MODEL,
                 max_tokens=self.MAX_TOKENS,
@@ -545,19 +640,31 @@ Format as a JSON object with specific, actionable recommendations.
             
             # Calculate processing time
             processing_time = time.time() - start_time
+            print(f"✅ [CLAUDE API] API response received successfully!")
+            print(f"⏱️ [CLAUDE API] Processing time: {processing_time:.2f} seconds")
             
             # Extract response text
+            print(f"🔄 [CLAUDE API] Extracting response content...")
             response_text = ""
             if response.content:
                 for block in response.content:
                     if hasattr(block, 'text'):
                         response_text += block.text
             
+            print(f"📝 [CLAUDE API] Response length: {len(response_text)} characters")
+            
             # Record usage
             tokens_used = response.usage.input_tokens + response.usage.output_tokens
+            print(f"📊 [CLAUDE API] Token usage:")
+            print(f"    • Input tokens: {response.usage.input_tokens}")
+            print(f"    • Output tokens: {response.usage.output_tokens}")
+            print(f"    • Total tokens: {tokens_used}")
+            
             self._record_usage(tokens_used)
+            print(f"📈 [CLAUDE API] Usage recorded for rate limiting")
             
             logger.info(f"Claude API call successful: {prompt_type.value}, {tokens_used} tokens, {processing_time:.2f}s")
+            print(f"✅ [CLAUDE API] ==================== API CALL COMPLETED SUCCESSFULLY ====================")
             
             return AnalysisResult(
                 prompt_type=prompt_type,
@@ -573,14 +680,22 @@ Format as a JSON object with specific, actionable recommendations.
             )
             
         except anthropic.APIError as e:
+            error_msg = f"API request failed: {e}"
+            print(f"❌ [CLAUDE API] ERROR: Anthropic API error - {e}")
             logger.error(f"Claude API error: {e}")
-            raise ClaudeAPIError(f"API request failed: {e}")
+            raise ClaudeAPIError(error_msg)
         except anthropic.RateLimitError as e:
+            error_msg = f"Rate limit exceeded: {e}"
+            print(f"❌ [CLAUDE API] ERROR: Rate limit exceeded - {e}")
+            print(f"⏳ [CLAUDE API] You may need to wait before making more requests")
             logger.error(f"Claude API rate limit exceeded: {e}")
-            raise ClaudeAPIError(f"Rate limit exceeded: {e}")
+            raise ClaudeAPIError(error_msg)
         except Exception as e:
+            error_msg = f"Unexpected error: {e}"
+            print(f"❌ [CLAUDE API] ERROR: Unexpected error - {e}")
+            print(f"🔍 [CLAUDE API] Error type: {type(e).__name__}")
             logger.error(f"Unexpected error in Claude API call: {e}")
-            raise ClaudeAPIError(f"Unexpected error: {e}")
+            raise ClaudeAPIError(error_msg)
     
     async def stream_analysis(
         self,

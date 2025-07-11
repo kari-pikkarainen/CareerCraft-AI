@@ -8,6 +8,7 @@ import {
   JobAnalysisRequest,
   ProcessingStatusEnum
 } from '../types';
+import { getApiService } from '../services';
 
 export interface AnalysisContextType extends AnalysisState {
   startAnalysis: (request: JobAnalysisRequest) => Promise<string>;
@@ -113,18 +114,39 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
     dispatch({ type: 'START_ANALYSIS', payload: request });
 
     try {
-      // This will be implemented when we create the API service
       console.log('Starting analysis:', request);
       
-      // Placeholder response - will be replaced with actual API call
-      const sessionId = 'mock_session_' + Date.now();
+      // Get the API service instance
+      const apiService = getApiService();
       
-      dispatch({ type: 'ANALYSIS_STARTED', payload: { session_id: sessionId, status: ProcessingStatusEnum.PENDING, progress: {}, estimated_completion: undefined } });
+      // Get resume file from session storage if available
+      const resumeFile = sessionStorage.getItem('resumeFile');
+      let file: File | undefined;
       
-      return sessionId;
+      if (resumeFile) {
+        // For now, we'll need to handle this differently since we can't reconstruct File from storage
+        // In the future, this would be handled by the file upload component directly
+        console.log('Resume file reference found in session storage');
+      }
+      
+      // Call the actual API
+      const response = await apiService.startJobAnalysis(request, file);
+      
+      dispatch({ 
+        type: 'ANALYSIS_STARTED', 
+        payload: { 
+          session_id: response.analysis_id, 
+          status: ProcessingStatusEnum.PENDING, 
+          progress: {}, 
+          estimated_completion: response.estimated_completion 
+        } 
+      });
+      
+      return response.analysis_id;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to start analysis';
+      console.error('Analysis start error:', error);
       dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
@@ -133,28 +155,21 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   // Get progress function
   const getProgress = async (sessionId: string): Promise<ProgressResponse> => {
     try {
-      // This will be implemented when we create the API service
       console.log('Getting progress for:', sessionId);
       
-      // Placeholder response - will be replaced with actual API call
-      const mockProgress: ProgressResponse = {
-        session_id: sessionId,
-        status: ProcessingStatusEnum.PROCESSING,
-        overall_progress: 50,
-        current_step: undefined,
-        steps: [],
-        estimated_time_remaining: undefined,
-        error_message: undefined,
-        started_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
+      // Get the API service instance
+      const apiService = getApiService();
       
-      dispatch({ type: 'PROGRESS_UPDATE', payload: mockProgress });
+      // Call the actual API
+      const progress = await apiService.getAnalysisProgress(sessionId);
       
-      return mockProgress;
+      dispatch({ type: 'PROGRESS_UPDATE', payload: progress });
+      
+      return progress;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to get progress';
+      console.error('Progress fetch error:', error);
       dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
@@ -163,14 +178,21 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   // Get results function
   const getResults = async (sessionId: string): Promise<AnalysisResults> => {
     try {
-      // This will be implemented when we create the API service
       console.log('Getting results for:', sessionId);
       
-      // Placeholder response - will be replaced with actual API call
-      throw new Error('API service not yet implemented');
+      // Get the API service instance
+      const apiService = getApiService();
+      
+      // Call the actual API
+      const results = await apiService.getAnalysisResults(sessionId);
+      
+      dispatch({ type: 'RESULTS_LOADED', payload: results });
+      
+      return results;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to get results';
+      console.error('Results fetch error:', error);
       dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
@@ -179,14 +201,19 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   // Cancel analysis function
   const cancelAnalysis = async (sessionId: string): Promise<void> => {
     try {
-      // This will be implemented when we create the API service
       console.log('Cancelling analysis:', sessionId);
       
-      // Placeholder - will be replaced with actual API call
+      // Get the API service instance
+      const apiService = getApiService();
+      
+      // Call the actual API
+      await apiService.cancelAnalysis(sessionId);
+      
       dispatch({ type: 'CANCEL_ANALYSIS', payload: sessionId });
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to cancel analysis';
+      console.error('Analysis cancel error:', error);
       dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
