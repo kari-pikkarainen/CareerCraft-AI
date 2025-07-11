@@ -10,7 +10,7 @@ import React, { useState, useCallback } from 'react';
 import FileUpload from '../components/FileUpload';
 import JobDescriptionForm from '../components/JobDescriptionForm';
 import { useAnalysis } from '../contexts/AnalysisContext';
-import { JobAnalysisRequest } from '../types';
+import { JobAnalysisRequest, ToneEnum } from '../types';
 import './AnalysisPage.css';
 
 interface AnalysisData {
@@ -117,7 +117,7 @@ const AnalysisPage: React.FC = () => {
         job_description: analysisData.jobDescription.jobDescription,
         job_url: analysisData.jobDescription.jobUrl,
         preferences: {
-          tone: 'professional',
+          tone: ToneEnum.PROFESSIONAL,
           focus_areas: ['relevant experience', 'technical skills'],
           include_salary_guidance: true,
           include_interview_prep: true
