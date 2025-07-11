@@ -34,7 +34,7 @@ const LoginPage: React.FC = () => {
     }
 
     try {
-      await login(email, password);
+      await login({ email, password });
       // Navigation will be handled by the useEffect above
     } catch (error) {
       // Error is handled by the AuthContext

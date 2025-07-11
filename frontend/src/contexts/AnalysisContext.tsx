@@ -1,91 +1,30 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-
-// Types
-export interface AnalysisStep {
-  step: string;
-  step_number: number;
-  step_name: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
-  progress_percentage: number;
-  started_at?: string;
-  completed_at?: string;
-  error_message?: string;
-  details?: Record<string, any>;
-}
-
-export interface AnalysisProgress {
-  analysis_id: string;
-  status: 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled';
-  overall_progress: number;
-  current_step?: AnalysisStep;
-  steps: AnalysisStep[];
-  started_at: string;
-  updated_at: string;
-  error?: string;
-}
-
-export interface AnalysisResult {
-  analysis_id: string;
-  session_id: string;
-  completed_at: string;
-  processing_time: number;
-  job_analysis: Record<string, any>;
-  company_research: Record<string, any>;
-  parsed_resume: Record<string, any>;
-  skills_analysis: Record<string, any>;
-  resume_recommendations: Record<string, any>;
-  cover_letter: Record<string, any>;
-  final_summary: Record<string, any>;
-  metadata: Record<string, any>;
-}
-
-export interface AnalysisHistory {
-  analysis_id: string;
-  status: string;
-  overall_progress: number;
-  started_at: string;
-  updated_at: string;
-  job_description_preview: string;
-  job_url?: string;
-  preferences: Record<string, any>;
-}
-
-export interface AnalysisState {
-  currentAnalysis: AnalysisProgress | null;
-  analysisHistory: AnalysisHistory[];
-  currentResults: AnalysisResult | null;
-  loading: boolean;
-  error: string | null;
-}
+import { 
+  AnalysisState, 
+  AnalysisAction, 
+  ProgressResponse, 
+  AnalysisResults,
+  SessionInfo,
+  JobAnalysisRequest,
+  ProcessingStatusEnum
+} from '../types';
 
 export interface AnalysisContextType extends AnalysisState {
-  startAnalysis: (jobDescription: string, resumeText: string, preferences?: Record<string, any>) => Promise<string>;
-  getProgress: (analysisId: string) => Promise<AnalysisProgress>;
-  getResults: (analysisId: string) => Promise<AnalysisResult>;
-  cancelAnalysis: (analysisId: string) => Promise<void>;
+  startAnalysis: (request: JobAnalysisRequest) => Promise<string>;
+  getProgress: (sessionId: string) => Promise<ProgressResponse>;
+  getResults: (sessionId: string) => Promise<AnalysisResults>;
+  cancelAnalysis: (sessionId: string) => Promise<void>;
   loadHistory: () => Promise<void>;
   clearError: () => void;
   clearCurrentAnalysis: () => void;
 }
 
-// Actions
-type AnalysisAction =
-  | { type: 'START_ANALYSIS' }
-  | { type: 'ANALYSIS_STARTED'; payload: string }
-  | { type: 'UPDATE_PROGRESS'; payload: AnalysisProgress }
-  | { type: 'ANALYSIS_COMPLETED'; payload: AnalysisResult }
-  | { type: 'ANALYSIS_FAILED'; payload: string }
-  | { type: 'LOAD_HISTORY_SUCCESS'; payload: AnalysisHistory[] }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string }
-  | { type: 'CLEAR_ERROR' }
-  | { type: 'CLEAR_CURRENT_ANALYSIS' };
-
 // Initial state
 const initialState: AnalysisState = {
-  currentAnalysis: null,
-  analysisHistory: [],
-  currentResults: null,
+  currentSession: undefined,
+  progress: undefined,
+  results: undefined,
+  history: [],
   loading: false,
   error: null,
 };
@@ -98,8 +37,8 @@ const analysisReducer = (state: AnalysisState, action: AnalysisAction): Analysis
         ...state,
         loading: true,
         error: null,
-        currentAnalysis: null,
-        currentResults: null,
+        progress: undefined,
+        results: undefined,
       };
     case 'ANALYSIS_STARTED':
       return {
@@ -107,30 +46,30 @@ const analysisReducer = (state: AnalysisState, action: AnalysisAction): Analysis
         loading: false,
         error: null,
       };
-    case 'UPDATE_PROGRESS':
+    case 'PROGRESS_UPDATE':
       return {
         ...state,
-        currentAnalysis: action.payload,
+        progress: action.payload,
         error: null,
       };
-    case 'ANALYSIS_COMPLETED':
+    case 'ANALYSIS_COMPLETE':
       return {
         ...state,
-        currentResults: action.payload,
+        results: action.payload,
         loading: false,
         error: null,
       };
-    case 'ANALYSIS_FAILED':
+    case 'ANALYSIS_ERROR':
       return {
         ...state,
         loading: false,
         error: action.payload,
-        currentAnalysis: null,
+        progress: undefined,
       };
-    case 'LOAD_HISTORY_SUCCESS':
+    case 'LOAD_HISTORY':
       return {
         ...state,
-        analysisHistory: action.payload,
+        history: action.payload,
         loading: false,
         error: null,
       };
@@ -138,12 +77,6 @@ const analysisReducer = (state: AnalysisState, action: AnalysisAction): Analysis
       return {
         ...state,
         loading: action.payload,
-      };
-    case 'SET_ERROR':
-      return {
-        ...state,
-        error: action.payload,
-        loading: false,
       };
     case 'CLEAR_ERROR':
       return {
@@ -153,8 +86,9 @@ const analysisReducer = (state: AnalysisState, action: AnalysisAction): Analysis
     case 'CLEAR_CURRENT_ANALYSIS':
       return {
         ...state,
-        currentAnalysis: null,
-        currentResults: null,
+        currentSession: undefined,
+        progress: undefined,
+        results: undefined,
         error: null,
       };
     default:
@@ -175,86 +109,85 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
   const [state, dispatch] = useReducer(analysisReducer, initialState);
 
   // Start analysis function
-  const startAnalysis = async (
-    jobDescription: string,
-    resumeText: string,
-    preferences?: Record<string, any>
-  ): Promise<string> => {
-    dispatch({ type: 'START_ANALYSIS' });
+  const startAnalysis = async (request: JobAnalysisRequest): Promise<string> => {
+    dispatch({ type: 'START_ANALYSIS', payload: request });
 
     try {
       // This will be implemented when we create the API service
-      console.log('Starting analysis:', { jobDescription, resumeText, preferences });
+      console.log('Starting analysis:', request);
       
       // Placeholder response - will be replaced with actual API call
-      const analysisId = 'mock_analysis_' + Date.now();
+      const sessionId = 'mock_session_' + Date.now();
       
-      dispatch({ type: 'ANALYSIS_STARTED', payload: analysisId });
+      dispatch({ type: 'ANALYSIS_STARTED', payload: { session_id: sessionId, status: ProcessingStatusEnum.PENDING, progress: {}, estimated_completion: undefined } });
       
-      return analysisId;
+      return sessionId;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to start analysis';
-      dispatch({ type: 'ANALYSIS_FAILED', payload: errorMessage });
+      dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
   };
 
   // Get progress function
-  const getProgress = async (analysisId: string): Promise<AnalysisProgress> => {
+  const getProgress = async (sessionId: string): Promise<ProgressResponse> => {
     try {
       // This will be implemented when we create the API service
-      console.log('Getting progress for:', analysisId);
+      console.log('Getting progress for:', sessionId);
       
       // Placeholder response - will be replaced with actual API call
-      const mockProgress: AnalysisProgress = {
-        analysis_id: analysisId,
-        status: 'processing',
+      const mockProgress: ProgressResponse = {
+        session_id: sessionId,
+        status: ProcessingStatusEnum.PROCESSING,
         overall_progress: 50,
+        current_step: undefined,
         steps: [],
+        estimated_time_remaining: undefined,
+        error_message: undefined,
         started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
       
-      dispatch({ type: 'UPDATE_PROGRESS', payload: mockProgress });
+      dispatch({ type: 'PROGRESS_UPDATE', payload: mockProgress });
       
       return mockProgress;
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to get progress';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
   };
 
   // Get results function
-  const getResults = async (analysisId: string): Promise<AnalysisResult> => {
+  const getResults = async (sessionId: string): Promise<AnalysisResults> => {
     try {
       // This will be implemented when we create the API service
-      console.log('Getting results for:', analysisId);
+      console.log('Getting results for:', sessionId);
       
       // Placeholder response - will be replaced with actual API call
       throw new Error('API service not yet implemented');
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to get results';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
   };
 
   // Cancel analysis function
-  const cancelAnalysis = async (analysisId: string): Promise<void> => {
+  const cancelAnalysis = async (sessionId: string): Promise<void> => {
     try {
       // This will be implemented when we create the API service
-      console.log('Cancelling analysis:', analysisId);
+      console.log('Cancelling analysis:', sessionId);
       
       // Placeholder - will be replaced with actual API call
-      dispatch({ type: 'CLEAR_CURRENT_ANALYSIS' });
+      dispatch({ type: 'CANCEL_ANALYSIS', payload: sessionId });
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to cancel analysis';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
       throw error;
     }
   };
@@ -268,13 +201,13 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
       console.log('Loading analysis history');
       
       // Placeholder response - will be replaced with actual API call
-      const mockHistory: AnalysisHistory[] = [];
+      const mockHistory: SessionInfo[] = [];
       
-      dispatch({ type: 'LOAD_HISTORY_SUCCESS', payload: mockHistory });
+      dispatch({ type: 'LOAD_HISTORY', payload: mockHistory });
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load history';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
+      dispatch({ type: 'ANALYSIS_ERROR', payload: errorMessage });
     }
   };
 

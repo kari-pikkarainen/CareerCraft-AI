@@ -6,9 +6,9 @@ import './DashboardPage.css';
 
 const DashboardPage: React.FC = () => {
   const { user } = useAuth();
-  const { analysisHistory } = useAnalysis();
+  const { history } = useAnalysis();
 
-  const recentAnalyses = analysisHistory.slice(0, 3);
+  const recentAnalyses = history.slice(0, 3);
 
   return (
     <div className="dashboard-page">
@@ -45,12 +45,12 @@ const DashboardPage: React.FC = () => {
           <div className="card-body">
             <div className="stats-grid">
               <div className="stat-item">
-                <div className="stat-value">{analysisHistory.length}</div>
+                <div className="stat-value">{history.length}</div>
                 <div className="stat-label">Total Analyses</div>
               </div>
               <div className="stat-item">
                 <div className="stat-value">
-                  {analysisHistory.filter(a => a.status === 'completed').length}
+                  {history.filter((a: any) => a.status === 'completed').length}
                 </div>
                 <div className="stat-label">Completed</div>
               </div>
@@ -66,7 +66,7 @@ const DashboardPage: React.FC = () => {
         <div className="dashboard-card full-width">
           <div className="card-header">
             <h2>🕒 Recent Activity</h2>
-            {analysisHistory.length > 3 && (
+            {history.length > 3 && (
               <Link to="/history" className="view-all-link">
                 View All
               </Link>
@@ -84,12 +84,12 @@ const DashboardPage: React.FC = () => {
               </div>
             ) : (
               <div className="activity-list">
-                {recentAnalyses.map((analysis) => (
-                  <div key={analysis.analysis_id} className="activity-item">
+                {recentAnalyses.map((analysis: any) => (
+                  <div key={analysis.session_id} className="activity-item">
                     <div className="activity-info">
-                      <h4>{analysis.job_description_preview}</h4>
+                      <h4>{analysis.job_title || 'Job Analysis'}</h4>
                       <p className="activity-meta">
-                        {new Date(analysis.started_at).toLocaleDateString()} • 
+                        {new Date(analysis.created_at).toLocaleDateString()} • 
                         <span className={`status status-${analysis.status}`}>
                           {analysis.status}
                         </span>

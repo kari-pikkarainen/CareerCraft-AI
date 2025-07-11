@@ -1,38 +1,13 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-
-// Types
-export interface User {
-  id: string;
-  email: string;
-  permissions: string[];
-  session_id: string;
-  created_at: string;
-  expires_at: string;
-}
-
-export interface AuthState {
-  user: User | null;
-  token: string | null;
-  loading: boolean;
-  error: string | null;
-}
+import { User, AuthState, AuthAction, LoginFormData } from '../types';
 
 export interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<void>;
+  login: (credentials: LoginFormData) => Promise<void>;
   logout: () => Promise<void>;
   refreshToken: () => Promise<void>;
   clearError: () => void;
+  isAuthenticated: boolean;
 }
-
-// Actions
-type AuthAction =
-  | { type: 'LOGIN_START' }
-  | { type: 'LOGIN_SUCCESS'; payload: { user: User; token: string } }
-  | { type: 'LOGIN_FAILURE'; payload: string }
-  | { type: 'LOGOUT' }
-  | { type: 'REFRESH_TOKEN_SUCCESS'; payload: string }
-  | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'CLEAR_ERROR' };
 
 // Initial state
 const initialState: AuthState = {
@@ -40,6 +15,7 @@ const initialState: AuthState = {
   token: null,
   loading: true,
   error: null,
+  isAuthenticated: false,
 };
 
 // Reducer
@@ -58,6 +34,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         token: action.payload.token,
         loading: false,
         error: null,
+        isAuthenticated: true,
       };
     case 'LOGIN_FAILURE':
       return {
@@ -66,6 +43,7 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         token: null,
         loading: false,
         error: action.payload,
+        isAuthenticated: false,
       };
     case 'LOGOUT':
       return {
@@ -74,8 +52,9 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         token: null,
         loading: false,
         error: null,
+        isAuthenticated: false,
       };
-    case 'REFRESH_TOKEN_SUCCESS':
+    case 'TOKEN_REFRESH_SUCCESS':
       return {
         ...state,
         token: action.payload,
@@ -120,9 +99,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           
           // Check if token is expired
           const now = new Date();
-          const expiresAt = new Date(user.expires_at);
+          const expiresAt = user.expires_at ? new Date(user.expires_at) : null;
           
-          if (now < expiresAt) {
+          if (expiresAt && now < expiresAt) {
             dispatch({ 
               type: 'LOGIN_SUCCESS', 
               payload: { user, token } 
@@ -153,13 +132,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (email: string, password: string): Promise<void> => {
+  const login = async (credentials: LoginFormData): Promise<void> => {
     dispatch({ type: 'LOGIN_START' });
 
     try {
       // This will be implemented when we create the API service
       // For now, we'll create a placeholder
-      console.log('Login attempt:', { email, password });
+      console.log('Login attempt:', credentials);
       
       // Placeholder response - will be replaced with actual API call
       throw new Error('API service not yet implemented');
@@ -226,6 +205,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     refreshToken,
     clearError,
+    isAuthenticated: !!state.user && !!state.token && !state.loading,
   };
 
   return (
