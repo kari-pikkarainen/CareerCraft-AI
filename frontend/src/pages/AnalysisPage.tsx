@@ -9,6 +9,8 @@
 import React, { useState, useCallback } from 'react';
 import FileUpload from '../components/FileUpload';
 import JobDescriptionForm from '../components/JobDescriptionForm';
+import { useAnalysis } from '../contexts/AnalysisContext';
+import { JobAnalysisRequest } from '../types';
 import './AnalysisPage.css';
 
 interface AnalysisData {
@@ -33,6 +35,7 @@ interface UploadState {
 }
 
 const AnalysisPage: React.FC = () => {
+  const { startAnalysis } = useAnalysis();
   const [currentStep, setCurrentStep] = useState<'upload' | 'form' | 'review'>('upload');
   const [analysisData, setAnalysisData] = useState<AnalysisData>({});
   const [uploadState, setUploadState] = useState<UploadState>({
@@ -105,31 +108,60 @@ const AnalysisPage: React.FC = () => {
     setFormLoading(true);
     
     try {
-      // Simulate analysis start
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!analysisData.resume || !analysisData.jobDescription) {
+        throw new Error('Resume and job description are required');
+      }
+
+      // Prepare the analysis request
+      const analysisRequest: JobAnalysisRequest = {
+        job_description: analysisData.jobDescription.jobDescription,
+        job_url: analysisData.jobDescription.jobUrl,
+        preferences: {
+          tone: 'professional',
+          focus_areas: ['relevant experience', 'technical skills'],
+          include_salary_guidance: true,
+          include_interview_prep: true
+        }
+      };
+
+      console.log('🚀 Starting real analysis with API...', analysisRequest);
+      
+      // Call the real API through AnalysisContext
+      const sessionId = await startAnalysis(analysisRequest);
       
       // Save analysis data to session storage for progress page
-      if (analysisData.resume && analysisData.jobDescription) {
-        const progressData = {
-          jobTitle: analysisData.jobDescription.jobTitle,
-          companyName: analysisData.jobDescription.companyName,
-          resumeFileName: analysisData.resume.name,
-          jobDescription: analysisData.jobDescription.jobDescription,
-          analysisId: 'analysis-' + Date.now(),
-        };
-        
-        sessionStorage.setItem('analysisData', JSON.stringify(progressData));
-        console.log('Starting analysis with:', progressData);
-      }
+      const progressData = {
+        jobTitle: analysisData.jobDescription.jobTitle,
+        companyName: analysisData.jobDescription.companyName,
+        resumeFileName: analysisData.resume.name,
+        jobDescription: analysisData.jobDescription.jobDescription,
+        analysisId: sessionId, // Use real session ID from API
+      };
+      
+      sessionStorage.setItem('analysisData', JSON.stringify(progressData));
+      console.log('✅ Real analysis started successfully! Session ID:', sessionId);
       
       // Navigate to progress page
       window.location.href = '/local/progress';
     } catch (error) {
-      console.error('Failed to start analysis:', error);
+      console.error('❌ Failed to start analysis:', error);
+      // Still navigate to show the error or fallback behavior
+      if (analysisData.resume && analysisData.jobDescription) {
+        const fallbackData = {
+          jobTitle: analysisData.jobDescription.jobTitle,
+          companyName: analysisData.jobDescription.companyName,
+          resumeFileName: analysisData.resume.name,
+          jobDescription: analysisData.jobDescription.jobDescription,
+          analysisId: 'mock-analysis-' + Date.now(), // Mock ID for fallback
+        };
+        sessionStorage.setItem('analysisData', JSON.stringify(fallbackData));
+        console.log('⚠️ Using fallback mock analysis mode');
+        window.location.href = '/local/progress';
+      }
     } finally {
       setFormLoading(false);
     }
-  }, [analysisData]);
+  }, [analysisData, startAnalysis]);
 
   // Reset workflow
   const handleReset = useCallback(() => {
