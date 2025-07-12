@@ -14,13 +14,10 @@ import './App.css';
 import { initializeServices, checkServiceHealth } from './services';
 
 // Import pages
-import AnalysisPage from './pages/AnalysisPage';
+import HomePage from './pages/HomePage';
+import PublicAnalysisPage from './pages/PublicAnalysisPage';
+import PublicProgressPage from './pages/PublicProgressPage';
 import ResultsPage from './pages/ResultsPage';
-import LocalDevelopmentPage from './pages/LocalDevelopmentPage';
-import LocalFileUploadPage from './pages/LocalFileUploadPage';
-import ApiTestPage from './pages/ApiTestPage';
-import ProgressPage from './pages/ProgressPage';
-import TestPage from './pages/TestPage';
 
 // Import components
 import ErrorBoundary from './components/ErrorBoundary';
@@ -82,17 +79,14 @@ const App: React.FC = () => {
         <Router>
           <div className="App">
             <Routes>
-              {/* Local development routes (no authentication) */}
-              <Route path="/local" element={<LocalDevelopmentPage />} />
-              <Route path="/local/analyze" element={<AnalysisPage />} />
-              <Route path="/local/upload" element={<LocalFileUploadPage />} />
-              <Route path="/local/progress" element={<ProgressPage />} />
-              <Route path="/local/results" element={<ResultsPage />} />
-              <Route path="/local/api-test" element={<ApiTestPage />} />
-              <Route path="/local/test" element={<TestPage />} />
+              {/* Public routes (no authentication required) */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/analyze" element={<PublicAnalysisPage />} />
+              <Route path="/progress" element={<PublicProgressPage />} />
+              <Route path="/results" element={<ResultsPage />} />
               
-              {/* Catch all - redirect to local development */}
-              <Route path="*" element={<Navigate to="/local" replace />} />
+              {/* Catch all - redirect to home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         </Router>

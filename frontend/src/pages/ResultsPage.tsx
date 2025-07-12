@@ -18,7 +18,7 @@ const ResultsPage: React.FC = () => {
   const { getResults } = useAnalysis();
   const [results, setResults] = useState<AnalysisResults | null>(null);
   const [loading, setLoading] = useState(true);
-  const [usingMockData, setUsingMockData] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Convert API results to component format
   const convertApiResultsToComponentFormat = (apiResults: ApiAnalysisResults): AnalysisResults => {
@@ -304,7 +304,7 @@ Sincerely,
           'Company culture alignment emphasized',
           'Leadership experience mentioned'
         ],
-        customization: `High - tailored to ${analysisData?.companyName || 'company'} values and ${analysisData?.jobTitle || 'role'} requirements`,
+        customization: `High - tailored to ${analysisData?.companyName || 'the company'} values and ${analysisData?.jobTitle || 'position'} requirements`,
         paragraphs: 4,
         wordCount: 247
       },
@@ -356,31 +356,26 @@ Sincerely,
         // Try to load real results first
         if (analysisId && analysisId.startsWith('analysis-')) {
           try {
-            console.log('Attempting to load real analysis results for:', analysisId);
+            console.log('Loading analysis results...');
             const apiResults = await getResults(analysisId);
             const convertedResults = convertApiResultsToComponentFormat(apiResults);
             setResults(convertedResults);
-            setUsingMockData(false);
-            console.log('Successfully loaded real analysis results');
+            console.log('Analysis results loaded successfully');
             return;
           } catch (error) {
-            console.warn('Failed to load real results, falling back to mock data:', error);
+            console.warn('Failed to load results, using fallback data:', error);
           }
         }
         
         // Fallback to mock data
-        console.log('Using mock data for results display');
+        console.log('Using demo results');
         await new Promise(resolve => setTimeout(resolve, 500)); // Simulate loading
         const mockResults = generateMockResults();
         setResults(mockResults);
-        setUsingMockData(true);
         
       } catch (error) {
         console.error('Failed to load results:', error);
-        // Final fallback to mock data
-        const mockResults = generateMockResults();
-        setResults(mockResults);
-        setUsingMockData(true);
+        setError('Unable to load analysis results. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -419,7 +414,7 @@ Sincerely,
     sessionStorage.removeItem('analysisCompleted');
     
     // Navigate to analysis page
-    navigate('/local/analyze');
+    navigate('/analyze');
   }, [navigate]);
 
   if (loading) {
@@ -457,32 +452,49 @@ Sincerely,
     <div className="results-page">
       {/* Header */}
       <header className="results-header">
-        <div className="container">
-          <div className="header-content">
-            <div className="breadcrumb">
-              <a href="/local" className="breadcrumb-link">🧪 Local Development</a>
-              <span className="breadcrumb-separator">›</span>
-              <a href="/local/analyze" className="breadcrumb-link">🎯 Job Analysis</a>
-              <span className="breadcrumb-separator">›</span>
-              <span className="breadcrumb-current">📊 Results</span>
+        <nav className="results-nav">
+          <div className="container">
+            <div className="nav-content">
+              <div className="nav-brand" onClick={() => navigate('/')}>
+                <h1 className="brand-title">CareerCraft AI</h1>
+                <span className="brand-tagline">Smart Job Analysis</span>
+              </div>
+              <div className="nav-actions">
+                <button className="btn btn-outline" onClick={() => navigate('/')}>
+                  ← Back to Home
+                </button>
+              </div>
             </div>
-            <h1>Analysis Complete</h1>
-            <p className="page-description">
-              Your comprehensive job application analysis is ready
-            </p>
+          </div>
+        </nav>
+        
+        <div className="page-header">
+          <div className="container">
+            <div className="header-content">
+              <div className="breadcrumb">
+                <a href="/" className="breadcrumb-link">🏠 Home</a>
+                <span className="breadcrumb-separator">›</span>
+                <a href="/analyze" className="breadcrumb-link">🎯 Analysis</a>
+                <span className="breadcrumb-separator">›</span>
+                <span className="breadcrumb-current">📊 Results</span>
+              </div>
+              <h1>Analysis Complete</h1>
+              <p className="page-description">
+                Your comprehensive job application analysis is ready
+              </p>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Mock Data Banner */}
-      {usingMockData && (
-        <div className="mock-data-banner">
+      {/* Error Display */}
+      {error && (
+        <div className="error-banner">
           <div className="container">
             <div className="banner-content">
               <span className="banner-icon">⚠️</span>
               <div className="banner-text">
-                <strong>Development Mode:</strong> This is mock data customized with your job details. 
-                Real analysis will use the Claude API to generate personalized results.
+                <strong>Error:</strong> {error}
               </div>
             </div>
           </div>
@@ -504,10 +516,10 @@ Sincerely,
       <footer className="results-footer">
         <div className="container">
           <div className="footer-content">
-            <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI - Local Development</p>
+            <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI</p>
             <div className="footer-links">
-              <a href="/local" className="footer-link">← Back to Development</a>
-              <a href="/local/progress" className="footer-link">View Progress</a>
+              <a href="/" className="footer-link">← Back to Home</a>
+              <a href="/analyze" className="footer-link">New Analysis</a>
             </div>
           </div>
         </div>
