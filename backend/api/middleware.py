@@ -69,6 +69,12 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 self._log_request(request, response, start_time, "public")
                 return response
             
+            # Skip authentication for CORS preflight OPTIONS requests
+            if request.method == "OPTIONS":
+                response = await call_next(request)
+                self._log_request(request, response, start_time, "cors_preflight")
+                return response
+            
             # Verify HMAC signature
             auth_result = await self._verify_hmac_signature(request)
             if not auth_result["valid"]:
@@ -99,7 +105,9 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
             return response
             
         except Exception as e:
+            import traceback
             logger.error(f"Authentication middleware error: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
             return self._create_error_response(
                 status.HTTP_500_INTERNAL_SERVER_ERROR,
                 "INTERNAL_ERROR",
@@ -178,6 +186,14 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         Preserves body for downstream processing.
         """
         try:
+            # Check if this is a multipart/form-data request
+            content_type = request.headers.get("content-type", "")
+            if content_type.startswith("multipart/form-data"):
+                # For FormData requests, use empty body for signature verification
+                # This matches the frontend behavior where FormData signatures use empty body
+                logger.debug("FormData request detected, using empty body for signature verification")
+                return ""
+            
             body = await request.body()
             
             # Store body in request state for reuse

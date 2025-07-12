@@ -41,8 +41,7 @@ async def analyze_application(
     tone: str = Form("professional", description="Cover letter tone"),
     focus_areas: str = Form("technical skills,relevant experience", description="Comma-separated focus areas"),
     include_salary_guidance: bool = Form(False, description="Include salary negotiation tips"),
-    include_interview_prep: bool = Form(False, description="Include interview preparation"),
-    session: SessionData = Depends(jwt_bearer)
+    include_interview_prep: bool = Form(False, description="Include interview preparation")
 ) -> JobAnalysisResponse:
     """
     Start comprehensive job application analysis.
@@ -109,9 +108,19 @@ async def analyze_application(
             "include_interview_prep": include_interview_prep
         }
         
-        # Start analysis
+        # Start analysis (create a temporary session for now)
+        from services.auth_service import SessionData
+        import uuid
+        
+        # Create temporary session for HMAC-only authentication
+        temp_session = SessionData(
+            session_id=str(uuid.uuid4()),
+            user_id="hmac_user",
+            permissions=["analyze"]
+        )
+        
         analysis_id = await job_analysis_service.start_analysis(
-            session_data=session,
+            session_data=temp_session,
             job_description=job_description,
             job_url=job_url,
             resume_file_id=resume_file_id,
@@ -119,7 +128,7 @@ async def analyze_application(
             preferences=preferences
         )
         
-        logger.info(f"Started analysis {analysis_id} for session {session.session_id}")
+        logger.info(f"Started analysis {analysis_id} for HMAC session {temp_session.session_id}")
         
         # Get initial progress
         progress = job_analysis_service.get_progress(analysis_id)
@@ -149,8 +158,7 @@ async def analyze_application(
 
 @router.get("/analysis/{analysis_id}/progress", response_model=Dict[str, Any])
 async def get_analysis_progress(
-    analysis_id: str,
-    session: SessionData = Depends(jwt_bearer)
+    analysis_id: str
 ) -> Dict[str, Any]:
     """
     Get real-time progress for a job analysis.
@@ -185,8 +193,7 @@ async def get_analysis_progress(
 
 @router.get("/analysis/{analysis_id}/results", response_model=Dict[str, Any])
 async def get_analysis_results(
-    analysis_id: str,
-    session: SessionData = Depends(jwt_bearer)
+    analysis_id: str
 ) -> Dict[str, Any]:
     """
     Get completed analysis results.

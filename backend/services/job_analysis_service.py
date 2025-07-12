@@ -260,13 +260,37 @@ class JobAnalysisService:
             
             logger.info(f"Starting analysis processing for job {analysis_id}")
             
-            # Execute each step
-            job_analysis_result = await self._execute_step_1_job_analysis(analysis_id, request)
-            company_research_result = await self._execute_step_2_company_research(analysis_id, request, job_analysis_result)
-            parsed_resume_result = await self._execute_step_3_resume_parsing(analysis_id, request)
-            skills_analysis_result = await self._execute_step_4_skills_analysis(analysis_id, request, job_analysis_result, parsed_resume_result)
+            # Execute steps with parallel processing for independent operations
+            logger.info("🚀 Starting parallel analysis processing...")
+            
+            # Phase 1: Run job analysis and resume parsing in parallel (independent steps)
+            logger.info("📋 Phase 1: Running job analysis and resume parsing in parallel...")
+            job_analysis_task = asyncio.create_task(self._execute_step_1_job_analysis(analysis_id, request))
+            resume_parsing_task = asyncio.create_task(self._execute_step_3_resume_parsing(analysis_id, request))
+            
+            job_analysis_result, parsed_resume_result = await asyncio.gather(
+                job_analysis_task, resume_parsing_task
+            )
+            
+            # Phase 2: Run company research and skills analysis in parallel (both depend on phase 1)
+            logger.info("🔍 Phase 2: Running company research and skills analysis in parallel...")
+            company_research_task = asyncio.create_task(self._execute_step_2_company_research(analysis_id, request, job_analysis_result))
+            skills_analysis_task = asyncio.create_task(self._execute_step_4_skills_analysis(analysis_id, request, job_analysis_result, parsed_resume_result))
+            
+            company_research_result, skills_analysis_result = await asyncio.gather(
+                company_research_task, skills_analysis_task
+            )
+            
+            # Phase 3: Resume enhancement (depends on skills analysis)
+            logger.info("📝 Phase 3: Running resume enhancement...")
             resume_enhancement_result = await self._execute_step_5_resume_enhancement(analysis_id, request, job_analysis_result, parsed_resume_result, skills_analysis_result)
+            
+            # Phase 4: Cover letter generation (depends on company research)
+            logger.info("✉️ Phase 4: Running cover letter generation...")
             cover_letter_result = await self._execute_step_6_cover_letter(analysis_id, request, job_analysis_result, company_research_result, parsed_resume_result)
+            
+            # Phase 5: Final review (depends on all previous steps)
+            logger.info("🎯 Phase 5: Running final review...")
             final_summary_result = await self._execute_step_7_final_review(analysis_id, request, job_analysis_result, company_research_result, parsed_resume_result, skills_analysis_result, resume_enhancement_result, cover_letter_result)
             
             # Create final result
