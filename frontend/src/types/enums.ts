@@ -1,7 +1,7 @@
 /**
  * TypeScript enums matching backend Pydantic enums
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 export enum EnvironmentEnum {

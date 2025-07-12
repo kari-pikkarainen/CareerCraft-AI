@@ -1,6 +1,6 @@
 /**
  * PublicProgressPage Styles - Real-time progress tracking
- * CareerCraft AI - Copyright (c) 2024 Kari Pikkarainen
+ * CareerCraft AI - Copyright (c) 2025 Kari Pikkarainen
  */
 
 /* Base styles */
@@ -25,6 +25,12 @@
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+/* Solid white header when analysis is complete */
+.progress-header.completed {
+  background: rgba(255, 255, 255, 1.0);
+  backdrop-filter: none;
 }
 
 .progress-nav {
@@ -353,6 +359,19 @@
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
+  /* Remove animations when analysis is complete */
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* Disable all animations when analysis is completed */
+.progress-header.completed *,
+.progress-header.completed *::before,
+.progress-header.completed *::after {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
 }
 
 .completion-icon {

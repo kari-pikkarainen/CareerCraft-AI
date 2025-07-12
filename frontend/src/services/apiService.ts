@@ -3,7 +3,7 @@
  * Provides secure communication with the FastAPI backend
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import CryptoJS from 'crypto-js';

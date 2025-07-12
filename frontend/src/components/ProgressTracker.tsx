@@ -3,7 +3,7 @@
  * Real-time progress tracking for 7-step job analysis workflow
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';

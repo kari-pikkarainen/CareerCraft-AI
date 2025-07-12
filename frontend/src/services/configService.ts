@@ -3,7 +3,7 @@
  * Manages API credentials, environment settings, and configuration
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import { EnvironmentEnum } from '../types';

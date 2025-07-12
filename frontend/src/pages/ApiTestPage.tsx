@@ -2,7 +2,7 @@
  * API Test Page - Test API connection and authentication
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React, { useState, useEffect } from 'react';

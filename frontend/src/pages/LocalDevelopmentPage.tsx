@@ -3,7 +3,7 @@
  * Direct access to job analysis workflow for testing
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React from 'react';
@@ -183,7 +183,7 @@ const LocalDevelopmentPage: React.FC = () => {
       {/* Footer */}
       <footer className="local-dev-footer">
         <div className="container">
-          <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI - Local Development Environment</p>
+          <p>&copy; 2025 Kari Pikkarainen. CareerCraft AI - Local Development Environment</p>
         </div>
       </footer>
     </div>

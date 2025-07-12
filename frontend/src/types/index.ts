@@ -1,7 +1,7 @@
 /**
  * Main TypeScript types export file
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 // Export all enums

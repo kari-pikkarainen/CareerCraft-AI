@@ -3,7 +3,7 @@
  * Comprehensive job analysis results display
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 .results-page {
@@ -64,14 +64,16 @@
   border: 4px solid rgba(255, 255, 255, 0.3);
   border-top: 4px solid white;
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  /* Remove spinning animation */
+  animation: none;
   margin: 0 auto 2rem;
 }
 
+/* Disabled spinning animation
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
+} */
 
 .loading-content h2 {
   font-size: 1.5rem;
@@ -113,17 +115,16 @@
 
 /* Header */
 .results-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  position: relative;
-  overflow: hidden;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 /* Navigation */
 .results-nav {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
 }
 
@@ -131,17 +132,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 3rem;
 }
 
 .nav-brand {
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  transition: opacity 0.3s ease;
+  /* Remove transition animation */
+  /* transition: opacity 0.3s ease; */
 }
 
 .nav-brand:hover {
-  opacity: 0.8;
+  /* Remove hover transition */
+  /* opacity: 0.8; */
 }
 
 .brand-title {
@@ -164,59 +168,35 @@
   gap: 1rem;
 }
 
-/* Page Header */
-.page-header {
-  padding: 2rem 0;
-}
-
-.header-content {
-  text-align: center;
-}
-
-.breadcrumb {
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-}
-
-.breadcrumb-link {
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.breadcrumb-link:hover {
-  color: white;
-}
-
-.breadcrumb-separator {
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0 0.5rem;
-}
-
-.breadcrumb-current {
-  color: white;
-  font-weight: 500;
-}
-
-.results-header h1 {
-  color: white;
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.page-description {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.125rem;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
+/* Removed page header styles - using consistent navigation only */
 
 /* Main Content */
 .results-main {
   flex: 1;
   padding: 3rem 0;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.results-main::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(167, 243, 208, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.results-main .container {
+  position: relative;
+  z-index: 1;
 }
 
 /* Footer */
@@ -250,7 +230,8 @@
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   font-size: 0.875rem;
-  transition: color 0.2s ease;
+  /* Remove transition animation */
+  /* transition: color 0.2s ease; */
 }
 
 .footer-link:hover {
@@ -268,7 +249,8 @@
   text-decoration: none;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  /* Remove button transition animation */
+  /* transition: all 0.2s ease; */
   font-size: 0.875rem;
   white-space: nowrap;
 }
@@ -280,7 +262,8 @@
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
+  /* Remove hover transform animation */
+  /* transform: translateY(-2px); */
   box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 

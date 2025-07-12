@@ -3,7 +3,7 @@
  * Centralized error management, logging, and user feedback
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import { ApiError, ErrorResponse, HttpStatus } from '../types';

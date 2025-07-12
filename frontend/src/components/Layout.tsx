@@ -89,7 +89,7 @@ const Layout: React.FC = () => {
         <div className="container">
           <div className="footer-content">
             <div className="footer-info">
-              <p>&copy; 2024 Kari Pikkarainen. All rights reserved. CareerCraft AI - Proprietary Software.</p>
+              <p>&copy; 2025 Kari Pikkarainen. All rights reserved. CareerCraft AI - Proprietary Software.</p>
             </div>
             <div className="footer-links">
               <button className="footer-link">Privacy</button>

@@ -2,7 +2,7 @@
  * CareerCraft AI - Public Home Page
  * A production-ready landing page for the job analysis service
  * 
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React from 'react';
@@ -240,7 +240,7 @@ const HomePage: React.FC = () => {
           </div>
           
           <div className="footer-bottom">
-            <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI. All rights reserved.</p>
+            <p>&copy; 2025 Kari Pikkarainen. CareerCraft AI. All rights reserved.</p>
           </div>
         </div>
       </footer>

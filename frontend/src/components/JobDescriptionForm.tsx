@@ -3,7 +3,7 @@
  * Comprehensive form for job posting details and analysis input
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';

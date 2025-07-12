@@ -3,7 +3,7 @@
  * Clean, production-ready interface for monitoring job analysis
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -122,7 +122,7 @@ const PublicProgressPage: React.FC = () => {
   return (
     <div className="public-progress-page">
       {/* Header */}
-      <header className="progress-header">
+      <header className={`progress-header ${status === ProcessingStatusEnum.COMPLETED ? 'completed' : ''}`}>
         <nav className="progress-nav">
           <div className="container">
             <div className="nav-content">

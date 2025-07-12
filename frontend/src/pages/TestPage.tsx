@@ -3,7 +3,7 @@
  * Comprehensive testing interface for the complete workflow
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React from 'react';
@@ -41,7 +41,7 @@ const TestPage: React.FC = () => {
       <footer className="test-page-footer">
         <div className="container">
           <div className="footer-content">
-            <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI - Local Development</p>
+            <p>&copy; 2025 Kari Pikkarainen. CareerCraft AI - Local Development</p>
             <div className="footer-links">
               <a href="/local" className="footer-link">← Back to Development</a>
               <a href="/local/analyze" className="footer-link">Start Analysis</a>

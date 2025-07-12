@@ -1,6 +1,6 @@
 /**
  * CareerCraft AI - Intelligent Job Application Assistant
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  * 
  * This software is proprietary and confidential.
  * Unauthorized use, distribution, or modification is strictly prohibited.

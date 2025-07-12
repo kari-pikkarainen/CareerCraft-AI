@@ -3,7 +3,7 @@
  * Shows detailed analysis, recommendations, and cover letter
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -16,9 +16,6 @@ import './ResultsPage.css';
 const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
   const { getResults } = useAnalysis();
-  const [results, setResults] = useState<AnalysisResults | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   // Convert API results to component format
   const convertApiResultsToComponentFormat = (apiResults: ApiAnalysisResults): AnalysisResults => {
@@ -99,8 +96,8 @@ const ResultsPage: React.FC = () => {
     };
   };
 
-  // Generate mock results data
-  const generateMockResults = useCallback((): AnalysisResults => {
+  // Generate mock results data immediately
+  const generateMockResults = (): AnalysisResults => {
     // Get analysis data from session storage
     const storedData = sessionStorage.getItem('analysisData');
     let analysisData = null;
@@ -334,7 +331,11 @@ Sincerely,
         ]
       }
     };
-  }, []);
+  };
+
+  // Initialize with mock results immediately to prevent "Results Not Found" flash
+  const [results, setResults] = useState<AnalysisResults>(generateMockResults());
+  const [error, setError] = useState<string | null>(null);
 
   // Load results data
   useEffect(() => {
@@ -369,20 +370,17 @@ Sincerely,
         
         // Fallback to mock data
         console.log('Using demo results');
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate loading
         const mockResults = generateMockResults();
         setResults(mockResults);
         
       } catch (error) {
         console.error('Failed to load results:', error);
         setError('Unable to load analysis results. Please try again later.');
-      } finally {
-        setLoading(false);
       }
     };
 
     loadResults();
-  }, [generateMockResults, getResults]);
+  }, [getResults]);
 
   // Handle export functionality
   const handleExport = useCallback((format: 'pdf' | 'docx' | 'json') => {
@@ -417,7 +415,8 @@ Sincerely,
     navigate('/analyze');
   }, [navigate]);
 
-  if (loading) {
+  // Remove loading state - go directly to results
+  /* if (loading) {
     return (
       <div className="results-page loading">
         <div className="loading-content">
@@ -427,9 +426,10 @@ Sincerely,
         </div>
       </div>
     );
-  }
+  } */
 
-  if (!results) {
+  // Results are always available now - no need for "Results Not Found" check
+  /* if (!results) {
     return (
       <div className="results-page error">
         <div className="error-content">
@@ -446,7 +446,7 @@ Sincerely,
         </div>
       </div>
     );
-  }
+  } */
 
   return (
     <div className="results-page">
@@ -467,24 +467,6 @@ Sincerely,
             </div>
           </div>
         </nav>
-        
-        <div className="page-header">
-          <div className="container">
-            <div className="header-content">
-              <div className="breadcrumb">
-                <a href="/" className="breadcrumb-link">🏠 Home</a>
-                <span className="breadcrumb-separator">›</span>
-                <a href="/analyze" className="breadcrumb-link">🎯 Analysis</a>
-                <span className="breadcrumb-separator">›</span>
-                <span className="breadcrumb-current">📊 Results</span>
-              </div>
-              <h1>Analysis Complete</h1>
-              <p className="page-description">
-                Your comprehensive job application analysis is ready
-              </p>
-            </div>
-          </div>
-        </div>
       </header>
 
       {/* Error Display */}
@@ -516,7 +498,7 @@ Sincerely,
       <footer className="results-footer">
         <div className="container">
           <div className="footer-content">
-            <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI</p>
+            <p>&copy; 2025 Kari Pikkarainen. CareerCraft AI</p>
             <div className="footer-links">
               <a href="/" className="footer-link">← Back to Home</a>
               <a href="/analyze" className="footer-link">New Analysis</a>

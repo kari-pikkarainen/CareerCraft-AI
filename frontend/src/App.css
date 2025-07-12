@@ -42,7 +42,8 @@ body {
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --border-radius: 0.5rem;
-  --transition: all 0.2s ease-in-out;
+  /* Remove global transition */
+  /* --transition: all 0.2s ease-in-out; */
 }
 
 /* Typography */
@@ -91,7 +92,8 @@ p {
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
-  transition: var(--transition);
+  /* Remove button transition */
+  /* transition: var(--transition); */
   min-height: 2.5rem;
 }
 
@@ -155,7 +157,8 @@ p {
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: 0.875rem;
-  transition: var(--transition);
+  /* Remove button transition */
+  /* transition: var(--transition); */
 }
 
 .form-input:focus {
@@ -271,22 +274,26 @@ p {
   border: 2px solid #f3f3f3;
   border-top: 2px solid var(--primary-color);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  /* Remove spinning animation */
+  /* animation: spin 1s linear infinite; */
 }
 
+/* Disabled spinning keyframes
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
-}
+} */
 
 .fade-in {
-  animation: fadeIn 0.3s ease-in-out;
+  /* Remove page transition animation */
+  /* animation: fadeIn 0.3s ease-in-out; */
 }
 
+/* Disabled page fade-in keyframes
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
-}
+} */
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -380,7 +387,8 @@ p {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   cursor: pointer;
-  transition: var(--transition);
+  /* Remove button transition */
+  /* transition: var(--transition); */
 }
 
 .app-error button:hover {

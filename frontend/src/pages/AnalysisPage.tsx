@@ -3,7 +3,7 @@
  * Integrates file upload and job description input for comprehensive analysis
  * 
  * CareerCraft AI - Proprietary Software
- * Copyright (c) 2024 Kari Pikkarainen. All rights reserved.
+ * Copyright (c) 2025 Kari Pikkarainen. All rights reserved.
  */
 
 import React, { useState, useCallback } from 'react';
@@ -458,7 +458,7 @@ const AnalysisPage: React.FC = () => {
       <footer className="analysis-footer">
         <div className="container">
           <div className="footer-content">
-            <p>&copy; 2024 Kari Pikkarainen. CareerCraft AI - Local Development</p>
+            <p>&copy; 2025 Kari Pikkarainen. CareerCraft AI - Local Development</p>
             <div className="footer-links">
               <a href="/local" className="footer-link">← Back to Development</a>
               <a href="/local/upload" className="footer-link">File Upload Test</a>
