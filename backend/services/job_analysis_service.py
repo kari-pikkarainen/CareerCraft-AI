@@ -16,7 +16,7 @@ import asyncio
 import json
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, asdict
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 import secrets
 import time
@@ -853,7 +853,7 @@ class JobAnalysisService:
     
     def cleanup_old_jobs(self, max_age_hours: int = 24) -> int:
         """Clean up old completed/failed analysis jobs"""
-        cutoff_time = datetime.now(timezone.utc) - datetime.timedelta(hours=max_age_hours)
+        cutoff_time = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
         cleaned_count = 0
         
         jobs_to_remove = []
