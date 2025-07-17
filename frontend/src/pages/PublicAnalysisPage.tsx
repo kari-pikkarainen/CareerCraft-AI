@@ -147,19 +147,10 @@ const PublicAnalysisPage: React.FC = () => {
       navigate('/progress');
     } catch (error) {
       console.error('Failed to start analysis:', error);
-      // Fallback to mock analysis
-      if (analysisData.resume && analysisData.jobDescription) {
-        const fallbackData = {
-          jobTitle: analysisData.jobDescription.jobTitle,
-          companyName: analysisData.jobDescription.companyName,
-          resumeFileName: analysisData.resume.name,
-          jobDescription: analysisData.jobDescription.jobDescription,
-          analysisId: 'mock-analysis-' + Date.now(),
-        };
-        sessionStorage.setItem('analysisData', JSON.stringify(fallbackData));
-        console.log('Using fallback mock analysis mode');
-        navigate('/progress');
-      }
+      setUploadState(prev => ({
+        ...prev,
+        error: 'Failed to start analysis. Please check your internet connection and try again.'
+      }));
     } finally {
       setFormLoading(false);
     }

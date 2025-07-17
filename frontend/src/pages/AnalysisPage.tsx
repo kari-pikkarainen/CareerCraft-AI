@@ -145,19 +145,10 @@ const AnalysisPage: React.FC = () => {
       window.location.href = '/local/progress';
     } catch (error) {
       console.error('❌ Failed to start analysis:', error);
-      // Still navigate to show the error or fallback behavior
-      if (analysisData.resume && analysisData.jobDescription) {
-        const fallbackData = {
-          jobTitle: analysisData.jobDescription.jobTitle,
-          companyName: analysisData.jobDescription.companyName,
-          resumeFileName: analysisData.resume.name,
-          jobDescription: analysisData.jobDescription.jobDescription,
-          analysisId: 'mock-analysis-' + Date.now(), // Mock ID for fallback
-        };
-        sessionStorage.setItem('analysisData', JSON.stringify(fallbackData));
-        console.log('⚠️ Using fallback mock analysis mode');
-        window.location.href = '/local/progress';
-      }
+      setUploadState(prev => ({
+        ...prev,
+        error: 'Failed to start analysis. Please check your internet connection and try again.'
+      }));
     } finally {
       setFormLoading(false);
     }

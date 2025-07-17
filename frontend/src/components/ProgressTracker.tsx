@@ -134,62 +134,12 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
     return new Date(startTime.getTime() + remainingTime * 1000);
   }, []);
 
-  // Generate mock data for each step
-  const generateMockStepData = useCallback((stepId: string) => {
-    switch (stepId) {
-      case 'job_analysis':
-        return {
-          keywords: ['Python', 'React', 'TypeScript', 'API Development'],
-          requirements: ['3+ years experience', 'Bachelor\'s degree', 'Team collaboration'],
-          matchScore: 85,
-        };
-      case 'company_research':
-        return {
-          industry: 'Technology',
-          size: '1000-5000 employees',
-          culture: 'Innovation-focused, collaborative environment',
-          benefits: ['Health insurance', 'Remote work', 'Learning budget'],
-        };
-      case 'resume_parsing':
-        return {
-          sections: ['Contact', 'Experience', 'Education', 'Skills'],
-          experience: '4 years',
-          skills: ['JavaScript', 'Python', 'React', 'Node.js'],
-          education: 'Bachelor of Science in Computer Science',
-        };
-      case 'skills_analysis':
-        return {
-          matchingSkills: ['Python', 'React', 'API Development'],
-          missingSkills: ['Docker', 'AWS'],
-          overallMatch: 78,
-          recommendations: ['Consider highlighting Docker experience', 'Add cloud platforms to skills'],
-        };
-      case 'resume_enhancement':
-        return {
-          improvements: [
-            'Add quantified achievements in current role',
-            'Include relevant certifications',
-            'Optimize keywords for ATS systems',
-          ],
-          score: 82,
-        };
-      case 'cover_letter':
-        return {
-          paragraphs: 4,
-          tone: 'Professional and enthusiastic',
-          customization: 'High - tailored to company and role',
-          keyPoints: ['Relevant experience', 'Cultural fit', 'Specific achievements'],
-        };
-      case 'final_review':
-        return {
-          overallScore: 88,
-          strengths: ['Strong technical background', 'Relevant experience', 'Good cultural fit'],
-          improvements: ['Add cloud experience', 'Include team leadership examples'],
-          recommendation: 'Strong candidate - proceed with application',
-        };
-      default:
-        return {};
+  // Extract real data from step details if available
+  const getStepData = useCallback((step: any) => {
+    if (step?.details && Object.keys(step.details).length > 0) {
+      return step.details;
     }
+    return null;
   }, []);
 
   // Simulate step progress for local testing
@@ -227,7 +177,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
       status: 'completed',
       duration: step.estimatedTime,
       result: `${step.name} completed successfully`,
-      data: generateMockStepData(step.id),
+      data: getStepData(step),
     };
 
     setStepResults(prev => ({ ...prev, [step.id]: stepResult }));
@@ -240,7 +190,7 @@ const ProgressTracker: React.FC<ProgressTrackerProps> = ({
 
     // Small delay before next step
     await new Promise(resolve => setTimeout(resolve, 500));
-  }, [generateMockStepData]);
+  }, [getStepData]);
 
   // Start progress simulation
   const startProgress = useCallback(async () => {

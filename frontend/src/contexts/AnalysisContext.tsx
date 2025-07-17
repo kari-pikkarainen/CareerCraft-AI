@@ -218,13 +218,12 @@ export const AnalysisProvider: React.FC<AnalysisProviderProps> = ({ children }) 
     dispatch({ type: 'SET_LOADING', payload: true });
 
     try {
-      // This will be implemented when we create the API service
       console.log('Loading analysis history');
       
-      // Placeholder response - will be replaced with actual API call
-      const mockHistory: SessionInfo[] = [];
-      
-      dispatch({ type: 'LOAD_HISTORY', payload: mockHistory });
+      // Use the API service to get history
+      const apiService = getApiService();
+      const historyResponse = await apiService.getAnalysisHistory();
+      dispatch({ type: 'LOAD_HISTORY', payload: historyResponse.sessions });
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load history';

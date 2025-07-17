@@ -459,18 +459,38 @@ async def root() -> Dict[str, Any]:
 
 if __name__ == "__main__":
     import uvicorn
+    import os
+    import argparse
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='CareerCraft AI Backend Server')
+    parser.add_argument('--host', default='127.0.0.1', help='Host to bind to (default: 127.0.0.1)')
+    parser.add_argument('--port', type=int, default=None, help='Port to bind to (default: 8000 or PORT env var)')
+    parser.add_argument('--reload', action='store_true', default=True, help='Enable auto-reload (default: True)')
+    parser.add_argument('--log-level', default=None, help='Log level (debug, info, warning, error)')
+    args = parser.parse_args()
     
     # Load configuration
     try:
         config = get_config()
         
+        # Determine port: CLI arg > PORT env var > config > default 8000
+        port = args.port or int(os.getenv('PORT', '8000'))
+        
+        # Determine log level: CLI arg > config > default 'info'
+        log_level = args.log_level or config.log_level.lower()
+        
+        print(f"🚀 Starting CareerCraft AI Backend on {args.host}:{port}")
+        print(f"🔧 Log Level: {log_level}")
+        print(f"🔄 Auto-reload: {args.reload}")
+        
         # Run the application
         uvicorn.run(
             "main:app",
-            host="127.0.0.1",
-            port=8000,
-            reload=True,
-            log_level=config.log_level.lower(),
+            host=args.host,
+            port=port,
+            reload=args.reload,
+            log_level=log_level,
             access_log=True
         )
         
