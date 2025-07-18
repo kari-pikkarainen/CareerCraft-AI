@@ -11,16 +11,11 @@
   max-width: 1200px;
   margin: 0 auto;
   background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
   overflow: hidden;
-  /* Remove animation */
-  /* animation: slideInUp 0.5s ease-out; */
 }
 
 /* Disabled slide animation
@@ -37,20 +32,23 @@
 
 /* Header */
 .results-header {
-  background: linear-gradient(135deg, var(--primary-color, #3182ce) 0%, var(--primary-color-dark, #2c5282) 100%);
-  color: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  color: #1a202c;
   padding: 2rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .analysis-meta h1 {
   font-size: 2rem;
   margin: 0 0 1rem 0;
   font-weight: 600;
+  color: #1a202c;
 }
 
 .meta-info {
@@ -67,7 +65,7 @@
 
 .meta-label {
   font-size: 0.75rem;
-  color: #000000;
+  color: #4a5568;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -75,7 +73,7 @@
 
 .meta-value {
   font-size: 0.875rem;
-  color: #000000;
+  color: #1a202c;
   font-weight: 600;
 }
 
@@ -127,16 +125,15 @@
   font-size: 2.5rem;
   font-weight: 700;
   line-height: 1;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #1a202c;
 }
 
 .score-label {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  opacity: 0.9;
   margin-top: 0.25rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #4a5568;
 }
 
 /* Navigation Tabs */
@@ -154,8 +151,8 @@
   padding: 1rem 1.5rem;
   background: none;
   border: none;
-  color: var(--text-secondary, #718096);
-  font-weight: 500;
+  color: #1a202c !important;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -164,12 +161,12 @@
 
 .tab:hover {
   background: var(--surface-color, #ffffff);
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
 }
 
 .tab.active {
   background: var(--surface-color, #ffffff);
-  color: var(--primary-color, #3182ce);
+  color: var(--primary-color, #3182ce) !important;
   border-bottom-color: var(--primary-color, #3182ce);
 }
 
@@ -226,14 +223,15 @@
 }
 
 .metric-label {
-  color: var(--text-secondary, #718096);
+  color: #1a202c;
   font-size: 0.875rem;
   margin-top: 0.25rem;
+  font-weight: 600;
 }
 
 /* Insights Section */
 .insights-section h2 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
   font-weight: 600;
@@ -246,27 +244,31 @@
 }
 
 .insight-card {
-  background: var(--surface-color, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: var(--border-radius, 12px);
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   padding: 1.5rem;
-  border-left: 4px solid var(--primary-color, #3182ce);
+  border-left: 4px solid #3182ce;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .insight-card.strengths {
-  border-left-color: var(--success-color, #38a169);
+  border-left-color: #38a169;
+  background: #ffffff !important;
 }
 
 .insight-card.improvements {
-  border-left-color: var(--warning-color, #d69e2e);
+  border-left-color: #ed8936;
+  background: #ffffff !important;
 }
 
 .insight-card.missing-skills {
-  border-left-color: var(--info-color, #3182ce);
+  border-left-color: #3182ce;
+  background: #ffffff !important;
 }
 
 .insight-card h3 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   font-size: 1.125rem;
   margin-bottom: 1rem;
   font-weight: 600;
@@ -280,8 +282,9 @@
 
 .insight-card li {
   padding: 0.5rem 0;
-  border-bottom: 1px solid var(--border-color, #e2e8f0);
-  color: var(--text-secondary, #718096);
+  border-bottom: 1px solid #e2e8f0;
+  color: #4a5568 !important;
+  line-height: 1.5;
 }
 
 .insight-card li:last-child {
@@ -290,17 +293,18 @@
 
 /* Recommendation Section */
 .recommendation-section h2 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
   font-weight: 600;
 }
 
 .recommendation-card {
-  background: rgba(var(--primary-color-rgb, 49, 130, 206), 0.03);
-  border: 1px solid rgba(var(--primary-color-rgb, 49, 130, 206), 0.2);
-  border-radius: var(--border-radius, 12px);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   padding: 2rem;
+  border-left: 4px solid #3182ce;
 }
 
 .recommendation-header {
@@ -334,18 +338,18 @@
 .recommendation-text {
   font-size: 1.125rem;
   line-height: 1.6;
-  color: var(--text-primary, #2d3748);
+  color: #1a202c;
   margin-bottom: 1.5rem;
 }
 
 .next-steps h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
 .next-steps ol {
-  color: var(--text-secondary, #718096);
+  color: #4a5568;
   line-height: 1.6;
 }
 
@@ -382,7 +386,7 @@
 }
 
 .section-header h2 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
@@ -411,7 +415,8 @@
 
 .section-content {
   padding: 1.5rem;
-  background: var(--surface-color, #ffffff);
+  background: #ffffff !important;
+  color: #1a202c !important;
 }
 
 /* Analysis Grid */
@@ -421,15 +426,26 @@
   gap: 1.5rem;
 }
 
+.analysis-item {
+  background: #ffffff !important;
+  color: #1a202c !important;
+}
+
 .analysis-item h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
 .analysis-item ul {
-  color: var(--text-secondary, #718096);
+  color: #4a5568 !important;
   line-height: 1.6;
+  background: transparent !important;
+}
+
+.analysis-item li {
+  color: #4a5568 !important;
+  background: transparent !important;
 }
 
 /* Tags */
@@ -497,12 +513,12 @@
 }
 
 .info-label {
-  color: var(--text-secondary, #718096);
-  font-weight: 500;
+  color: #1a202c !important;
+  font-weight: 600;
 }
 
 .info-value {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   font-weight: 600;
 }
 
@@ -511,9 +527,17 @@
 }
 
 .insight-group h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-weight: 600;
+}
+
+.insight-group ul {
+  color: #4a5568 !important;
+}
+
+.insight-group li {
+  color: #4a5568 !important;
 }
 
 /* Skills Breakdown */
@@ -524,7 +548,7 @@
 }
 
 .skills-group h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-weight: 600;
 }
@@ -593,7 +617,7 @@
 }
 
 .enhancement-header h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin: 0;
   font-weight: 600;
 }
@@ -621,7 +645,7 @@
 }
 
 .cover-letter-header h2 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: 600;
@@ -671,13 +695,13 @@
 }
 
 .key-points h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-weight: 600;
 }
 
 .key-points ul {
-  color: var(--text-secondary, #718096);
+  color: #4a5568 !important;
   line-height: 1.6;
 }
 
@@ -689,7 +713,7 @@
 
 /* Export Content */
 .export-content h2 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 2rem;
   font-size: 1.5rem;
   font-weight: 600;
@@ -702,7 +726,7 @@
 }
 
 .export-section h3 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin-bottom: 1rem;
   font-weight: 600;
 }
@@ -738,7 +762,7 @@
 }
 
 .export-info h4 {
-  color: var(--text-primary, #2d3748);
+  color: #1a202c !important;
   margin: 0 0 0.25rem 0;
   font-weight: 600;
 }
@@ -761,12 +785,19 @@
   gap: 0.75rem;
   cursor: pointer;
   padding: 0.5rem 0;
+  color: #1a202c !important;
+  font-weight: 500;
 }
 
 .export-checkbox input {
   width: 18px;
   height: 18px;
   accent-color: var(--primary-color, #3182ce);
+}
+
+.export-checkbox span {
+  color: #1a202c !important;
+  font-weight: 500;
 }
 
 /* Footer */

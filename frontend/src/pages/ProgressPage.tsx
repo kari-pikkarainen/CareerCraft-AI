@@ -25,16 +25,7 @@ const ProgressPage: React.FC = () => {
   const [isProgressActive, setIsProgressActive] = useState(false);
   const [showControls, setShowControls] = useState(true);
 
-  // Demo data for testing
-  const getDemoData = useCallback((): AnalysisData => ({
-    jobTitle: 'Senior Software Engineer',
-    companyName: 'TechCorp Inc.',
-    resumeFileName: 'john_doe_resume.pdf',
-    jobDescription: 'We are looking for a skilled Senior Software Engineer...',
-    analysisId: 'demo-analysis-' + Date.now(),
-  }), []);
-
-  // Load analysis data from session storage or use demo data
+  // Load analysis data from session storage
   useEffect(() => {
     const storedData = sessionStorage.getItem('analysisData');
     if (storedData) {
@@ -42,12 +33,14 @@ const ProgressPage: React.FC = () => {
         setAnalysisData(JSON.parse(storedData));
       } catch (error) {
         console.error('Failed to parse analysis data:', error);
-        setAnalysisData(getDemoData());
+        // Redirect to start new analysis if no valid data
+        window.location.href = '/local/analyze';
       }
     } else {
-      setAnalysisData(getDemoData());
+      // No analysis data found, redirect to start new analysis
+      window.location.href = '/local/analyze';
     }
-  }, [getDemoData]);
+  }, []);
 
   // Handle analysis completion
   const handleAnalysisComplete = useCallback(() => {

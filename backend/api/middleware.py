@@ -186,17 +186,18 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
         Preserves body for downstream processing.
         """
         try:
-            # Check if this is a multipart/form-data request
+            # Check if this is a form-data request (multipart or urlencoded)
             content_type = request.headers.get("content-type", "")
-            if content_type.startswith("multipart/form-data"):
+            if content_type.startswith("multipart/form-data") or content_type.startswith("application/x-www-form-urlencoded"):
                 # For FormData requests, use empty body for signature verification
                 # This matches the frontend behavior where FormData signatures use empty body
-                logger.debug("FormData request detected, using empty body for signature verification")
+                logger.debug(f"Form data request detected ({content_type}), using empty body for signature verification")
                 return ""
             
+            # Read and cache the body
             body = await request.body()
             
-            # Store body in request state for reuse
+            # Cache the body for later use
             request.state.cached_body = body
             
             return body.decode('utf-8') if body else ""

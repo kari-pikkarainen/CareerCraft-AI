@@ -74,6 +74,7 @@ class AnalysisRequest:
     user_id: str
     job_description: str
     job_url: Optional[str] = None
+    company_name: Optional[str] = None
     resume_file_id: Optional[str] = None
     resume_text: Optional[str] = None
     preferences: Dict[str, Any] = None
@@ -175,6 +176,7 @@ class JobAnalysisService:
         session_data: SessionData,
         job_description: str,
         job_url: Optional[str] = None,
+        company_name: Optional[str] = None,
         resume_file_id: Optional[str] = None,
         resume_text: Optional[str] = None,
         preferences: Optional[Dict[str, Any]] = None
@@ -209,6 +211,7 @@ class JobAnalysisService:
             user_id=session_data.user_id or "anonymous",
             job_description=job_description,
             job_url=job_url,
+            company_name=company_name,
             resume_file_id=resume_file_id,
             resume_text=resume_text,
             preferences=preferences or {}
@@ -474,7 +477,7 @@ class JobAnalysisService:
                         "metadata": parsed_resume_obj.metadata
                     }
                 except Exception as e:
-                    # Fallback for mocked objects
+                    # Fallback for different object types or attribute access
                     parsed_resume = {
                         "source": "text_input",
                         "contact_info": {

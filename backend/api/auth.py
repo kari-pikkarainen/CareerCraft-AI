@@ -73,7 +73,7 @@ class StatusResponse(BaseModel):
 # Authentication Endpoints
 
 @router.post("/login", response_model=AuthResponse)
-async def login(request: AuthRequest) -> AuthResponse:
+async def login(request: Request) -> AuthResponse:
     """
     Create new authenticated session.
     
@@ -81,22 +81,48 @@ async def login(request: AuthRequest) -> AuthResponse:
     In a production system, this would typically validate user credentials.
     """
     try:
+        # Get the cached body from middleware to avoid conflicts
+        if hasattr(request.state, 'cached_body'):
+            body = request.state.cached_body
+        else:
+            # Fallback to reading body directly
+            body = await request.body()
+            
+        logger.debug(f"Request body length: {len(body) if body else 0}")
+        logger.debug(f"Request body: {body.decode('utf-8') if body else 'empty'}")
+        
+        if body:
+            import json
+            body_data = json.loads(body.decode('utf-8'))
+            auth_request = AuthRequest(**body_data)
+        else:
+            auth_request = AuthRequest()
+        
+        logger.info(f"Login request received for client: {auth_request.client_id}")
+        
         # Generate session ID
         session_id = f"session_{secrets.token_urlsafe(16)}"
+        logger.debug(f"Generated session ID: {session_id}")
         
         # Create session
         token, session_data = create_session(
             session_id=session_id,
-            user_id=request.client_id,
-            permissions=request.permissions or []
+            user_id=auth_request.client_id,
+            permissions=auth_request.permissions or []
         )
+        logger.debug(f"Session created successfully")
         
         # Calculate expiration time
-        expires_in = int(session_data.time_until_expiry().total_seconds())
+        try:
+            expires_in = int(session_data.time_until_expiry().total_seconds())
+            logger.debug(f"Expires in: {expires_in} seconds")
+        except Exception as e:
+            logger.error(f"Error calculating expiration: {e}")
+            expires_in = 1800  # Default to 30 minutes
         
-        logger.info(f"Created session {session_id} for client {request.client_id}")
+        logger.info(f"Created session {session_id} for client {auth_request.client_id}")
         
-        return AuthResponse(
+        auth_response = AuthResponse(
             access_token=token,
             token_type="bearer",
             expires_in=expires_in,
@@ -104,8 +130,13 @@ async def login(request: AuthRequest) -> AuthResponse:
             permissions=session_data.permissions
         )
         
+        logger.debug(f"Returning auth response: {auth_response.model_dump()}")
+        return auth_response
+        
     except Exception as e:
+        import traceback
         logger.error(f"Login failed: {e}")
+        logger.error(f"Login traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Authentication failed"
@@ -380,4 +411,26 @@ async def verify_signature_endpoint(request: Request) -> Dict[str, Any]:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Signature verification test failed"
+        )
+
+
+@router.post("/test-simple", response_model=Dict[str, Any])
+async def test_simple_endpoint(request: Request) -> Dict[str, Any]:
+    """
+    Simple test endpoint that doesn't use request body parsing.
+    """
+    try:
+        logger.info("Test endpoint called")
+        
+        return {
+            "status": "success",
+            "message": "Simple test endpoint working",
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"Test endpoint failed: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Test endpoint failed"
         )

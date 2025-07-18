@@ -118,6 +118,7 @@ const PublicAnalysisPage: React.FC = () => {
       const analysisRequest: JobAnalysisRequest = {
         job_description: analysisData.jobDescription.jobDescription,
         job_url: analysisData.jobDescription.jobUrl,
+        company_name: analysisData.jobDescription.companyName,
         preferences: {
           tone: ToneEnum.PROFESSIONAL,
           focus_areas: ['relevant experience', 'technical skills'],

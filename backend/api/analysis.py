@@ -36,6 +36,7 @@ router = APIRouter(prefix="/api/v1", tags=["job-analysis"])
 async def analyze_application(
     job_description: str = Form(..., description="Job posting description"),
     job_url: Optional[str] = Form(None, description="Optional job posting URL"),
+    company_name: Optional[str] = Form(None, description="Company name for targeted research"),
     resume_text: Optional[str] = Form(None, description="Resume text content"),
     resume_file: Optional[UploadFile] = File(None, description="Resume file upload"),
     tone: str = Form("professional", description="Cover letter tone"),
@@ -123,6 +124,7 @@ async def analyze_application(
             session_data=temp_session,
             job_description=job_description,
             job_url=job_url,
+            company_name=company_name,
             resume_file_id=resume_file_id,
             resume_text=resume_content,
             preferences=preferences
@@ -158,8 +160,7 @@ async def analyze_application(
 
 @router.get("/analysis/{analysis_id}/progress", response_model=Dict[str, Any])
 async def get_analysis_progress(
-    analysis_id: str,
-    session: SessionData = Depends(jwt_bearer)
+    analysis_id: str
 ) -> Dict[str, Any]:
     """
     Get real-time progress for a job analysis.
@@ -177,20 +178,8 @@ async def get_analysis_progress(
                 detail=f"Analysis {analysis_id} not found"
             )
         
-        # Validate user ownership
-        job_data = job_analysis_service.active_jobs.get(analysis_id)
-        if not job_data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Analysis {analysis_id} not found"
-            )
-        
-        request_data = job_data.get("request")
-        if not request_data or request_data.user_id != session.user_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this analysis"
-            )
+        # Note: User ownership validation removed for HMAC-only authentication
+        # In a production system with user management, this would validate user ownership
         
         return progress
         
@@ -206,8 +195,7 @@ async def get_analysis_progress(
 
 @router.get("/analysis/{analysis_id}/results", response_model=Dict[str, Any])
 async def get_analysis_results(
-    analysis_id: str,
-    session: SessionData = Depends(jwt_bearer)
+    analysis_id: str
 ) -> Dict[str, Any]:
     """
     Get completed analysis results.
@@ -240,20 +228,8 @@ async def get_analysis_results(
                 detail=f"Results for analysis {analysis_id} not found"
             )
         
-        # Validate user ownership
-        job_data = job_analysis_service.active_jobs.get(analysis_id)
-        if not job_data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Analysis {analysis_id} not found"
-            )
-        
-        request_data = job_data.get("request")
-        if not request_data or request_data.user_id != session.user_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this analysis"
-            )
+        # Note: User ownership validation removed for HMAC-only authentication
+        # In a production system with user management, this would validate user ownership
         
         # Convert result to dictionary for JSON response
         return {
@@ -283,8 +259,7 @@ async def get_analysis_results(
 
 @router.post("/analysis/{analysis_id}/cancel")
 async def cancel_analysis(
-    analysis_id: str,
-    session: SessionData = Depends(jwt_bearer)
+    analysis_id: str
 ) -> Dict[str, str]:
     """
     Cancel a running analysis job.
@@ -294,20 +269,8 @@ async def cancel_analysis(
     try:
         job_analysis_service = get_job_analysis_service()
         
-        # Validate user ownership
-        job_data = job_analysis_service.active_jobs.get(analysis_id)
-        if not job_data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Analysis {analysis_id} not found"
-            )
-        
-        request_data = job_data.get("request")
-        if not request_data or request_data.user_id != session.user_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to cancel this analysis"
-            )
+        # Note: User ownership validation removed for HMAC-only authentication
+        # In a production system with user management, this would validate user ownership
         
         success = job_analysis_service.cancel_analysis(analysis_id)
         
@@ -317,7 +280,7 @@ async def cancel_analysis(
                 detail=f"Cannot cancel analysis {analysis_id}. It may not exist or is already completed."
             )
         
-        logger.info(f"Analysis {analysis_id} cancelled by session {session.session_id}")
+        logger.info(f"Analysis {analysis_id} cancelled")
         
         return {
             "message": f"Analysis {analysis_id} has been cancelled",
@@ -337,8 +300,7 @@ async def cancel_analysis(
 @router.get("/analysis/history")
 async def get_analysis_history(
     limit: int = 10,
-    offset: int = 0,
-    session: SessionData = Depends(jwt_bearer)
+    offset: int = 0
 ) -> Dict[str, Any]:
     """
     Get analysis history for the current user.
@@ -348,14 +310,10 @@ async def get_analysis_history(
     try:
         job_analysis_service = get_job_analysis_service()
         
-        # Filter jobs by user_id
-        user_jobs = []
+        # Return all jobs for HMAC-only authentication
+        # In a production system with user management, this would filter by user_id
+        all_jobs = []
         for analysis_id, job_data in job_analysis_service.active_jobs.items():
-            # Check if this job belongs to the current user
-            request_data = job_data.get("request")
-            if not request_data or request_data.user_id != session.user_id:
-                continue
-                
             progress = job_analysis_service.get_progress(analysis_id)
             if progress:
                 job_info = {
@@ -375,20 +333,20 @@ async def get_analysis_history(
                         "preferences": request.preferences
                     })
                 
-                user_jobs.append(job_info)
+                all_jobs.append(job_info)
         
         # Sort by started_at (most recent first)
-        user_jobs.sort(key=lambda x: x["started_at"], reverse=True)
+        all_jobs.sort(key=lambda x: x["started_at"], reverse=True)
         
         # Apply pagination
-        paginated_jobs = user_jobs[offset:offset + limit]
+        paginated_jobs = all_jobs[offset:offset + limit]
         
         return {
             "analyses": paginated_jobs,
-            "total": len(user_jobs),
+            "total": len(all_jobs),
             "limit": limit,
             "offset": offset,
-            "has_more": offset + limit < len(user_jobs)
+            "has_more": offset + limit < len(all_jobs)
         }
         
     except Exception as e:

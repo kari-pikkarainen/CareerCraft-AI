@@ -18,6 +18,7 @@ export interface JobPreferences {
 export interface JobAnalysisRequest {
   job_description: string; // min 50, max 50000 chars
   job_url?: string;
+  company_name?: string; // User-specified company name for targeted research
   preferences: JobPreferences;
 }
 
@@ -152,13 +153,19 @@ export interface ApplicationStrategyResult {
 // Complete analysis results
 export interface AnalysisResults {
   session_id: string;
+  analysis_id?: string; // Backend returns this
   job_analysis: JobAnalysisResult;
   company_research: CompanyResearchResult;
-  resume_analysis: ResumeAnalysisResult;
+  resume_analysis?: ResumeAnalysisResult; // Optional for backward compatibility
+  parsed_resume?: ResumeAnalysisResult; // Backend actually returns this
+  skills_analysis?: any; // Backend returns this
+  resume_recommendations?: any; // Backend returns this
   cover_letter: CoverLetterResult;
-  application_strategy: ApplicationStrategyResult;
+  application_strategy?: ApplicationStrategyResult; // Optional for backward compatibility
+  final_summary?: ApplicationStrategyResult; // Backend actually returns this
   processing_time: number; // seconds
   completed_at: string; // ISO date string
+  metadata?: any; // Backend returns processing metadata
 }
 
 // Session and history

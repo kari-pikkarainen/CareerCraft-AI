@@ -50,71 +50,8 @@
   font-weight: 600;
 }
 
-/* Loading State */
-.loading-content {
-  text-align: center;
-  color: white;
-  max-width: 400px;
-  padding: 2rem;
-}
-
-.spinner-large {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid white;
-  border-radius: 50%;
-  /* Remove spinning animation */
-  animation: none;
-  margin: 0 auto 2rem;
-}
-
-/* Disabled spinning animation
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-} */
-
-.loading-content h2 {
-  font-size: 1.5rem;
-  margin: 0 0 1rem 0;
-  font-weight: 600;
-}
-
-.loading-content p {
-  font-size: 1rem;
-  margin: 0;
-  opacity: 0.9;
-}
-
-/* Error State */
-.error-content {
-  text-align: center;
-  color: white;
-  max-width: 400px;
-  padding: 2rem;
-}
-
-.error-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-}
-
-.error-content h2 {
-  font-size: 1.5rem;
-  margin: 0 0 1rem 0;
-  font-weight: 600;
-}
-
-.error-content p {
-  font-size: 1rem;
-  margin: 0 0 2rem 0;
-  opacity: 0.9;
-  line-height: 1.6;
-}
-
-/* Header */
-.results-header {
+/* Header & Navigation - Consistent with other pages */
+.analysis-header {
   background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
@@ -123,9 +60,14 @@
   z-index: 100;
 }
 
-/* Navigation */
-.results-nav {
+.analysis-nav {
   padding: 1rem 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .nav-content {
@@ -139,13 +81,6 @@
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  /* Remove transition animation */
-  /* transition: opacity 0.3s ease; */
-}
-
-.nav-brand:hover {
-  /* Remove hover transition */
-  /* opacity: 0.8; */
 }
 
 .brand-title {
@@ -168,7 +103,75 @@
   gap: 1rem;
 }
 
-/* Removed page header styles - using consistent navigation only */
+/* Loading State */
+.loading-state {
+  text-align: center;
+  color: #1a202c;
+  max-width: 400px;
+  padding: 3rem 2rem;
+  margin: 2rem auto;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #e2e8f0;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  /* Remove spinning animation */
+  animation: none;
+  margin: 0 auto 2rem;
+}
+
+.loading-state h2 {
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.loading-state p {
+  font-size: 1rem;
+  margin: 0;
+  color: #4a5568;
+}
+
+/* Error State */
+.error-state {
+  text-align: center;
+  color: #1a202c;
+  max-width: 400px;
+  padding: 3rem 2rem;
+  margin: 2rem auto;
+}
+
+.error-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.error-state h2 {
+  font-size: 1.5rem;
+  margin: 0 0 1rem 0;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.error-state p {
+  font-size: 1rem;
+  margin: 0 0 2rem 0;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Old header styles removed - now using consistent analysis-header structure */
 
 /* Main Content */
 .results-main {

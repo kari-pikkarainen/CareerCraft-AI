@@ -62,7 +62,7 @@ const PublicProgressPage: React.FC = () => {
       if (progressData.status === ProcessingStatusEnum.COMPLETED) {
         // Small delay before redirecting to show completion
         setTimeout(() => {
-          navigate('/results');
+          navigate(`/results?analysis=${analysisData?.analysisId}`);
         }, 2000);
       } else if (progressData.status === ProcessingStatusEnum.FAILED) {
         setError(progressData.error_message || 'Analysis failed');
@@ -76,14 +76,14 @@ const PublicProgressPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Failed to fetch progress:', error);
-      // If real API fails, show mock completion after delay
-      setTimeout(() => {
-        setOverallProgress(100);
-        setStatus(ProcessingStatusEnum.COMPLETED);
-        setTimeout(() => {
-          navigate('/results');
-        }, 2000);
-      }, 5000);
+      
+      // Handle rate limiting gracefully
+      if (error instanceof Error && error.message.includes('429')) {
+        console.log('Rate limit hit, will retry on next interval');
+        return; // Don't show error for rate limits, just wait for next poll
+      }
+      
+      setError('Unable to fetch analysis progress. Please try refreshing the page.');
     }
   }, [analysisData?.analysisId, getProgress, navigate]);
 
@@ -93,11 +93,15 @@ const PublicProgressPage: React.FC = () => {
       return;
     }
 
+    console.log('Starting progress polling for analysis:', analysisData?.analysisId);
     fetchProgress();
-    const interval = setInterval(fetchProgress, 2000);
+    const interval = setInterval(fetchProgress, 10000); // 10 second intervals to prevent rate limiting
 
-    return () => clearInterval(interval);
-  }, [analysisData, status, fetchProgress]);
+    return () => {
+      console.log('Cleaning up progress polling interval');
+      clearInterval(interval);
+    };
+  }, [analysisData?.analysisId, status]); // Removed fetchProgress to prevent multiple intervals
 
   const handleGoHome = () => {
     navigate('/');

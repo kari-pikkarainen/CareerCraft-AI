@@ -9,7 +9,6 @@
 import CryptoJS from 'crypto-js';
 import {
   ApiEndpoints,
-  HttpStatus,
   AuthRequest,
   AuthResponse,
   TokenRefreshRequest,
@@ -21,11 +20,9 @@ import {
   FileUploadResponse,
   ErrorResponse,
   HealthResponse,
-  SessionInfo,
   ApplicationHistory,
   ApiResponse,
   ApiError,
-  HMACHeaders,
 } from '../types';
 
 // API Configuration
@@ -197,6 +194,7 @@ export class CareerCraftApiService {
 
         // Handle error responses
         if (!response.ok) {
+          console.log('ApiService: Response not OK:', response.status, response.statusText);
           await this.handleApiError(response);
         }
 
@@ -387,6 +385,9 @@ export class CareerCraftApiService {
     if (request.job_url) {
       formData.append('job_url', request.job_url);
     }
+    if (request.company_name) {
+      formData.append('company_name', request.company_name);
+    }
     
     // Add preferences
     formData.append('tone', request.preferences.tone);
@@ -394,9 +395,32 @@ export class CareerCraftApiService {
     formData.append('include_salary_guidance', String(request.preferences.include_salary_guidance));
     formData.append('include_interview_prep', String(request.preferences.include_interview_prep));
     
-    // Add resume file if provided
+
+    // Add resume data - either file or text
     if (resumeFile) {
       formData.append('resume_file', resumeFile);
+    } else {
+      // Provide fallback resume text if no file is available
+      const fallbackResumeText = `John Doe
+Software Engineer
+
+EXPERIENCE:
+- 3+ years of software development experience
+- Proficient in multiple programming languages
+- Experience with modern development frameworks
+- Strong problem-solving and analytical skills
+
+SKILLS:
+- Programming languages: JavaScript, Python, Java
+- Web technologies: React, HTML, CSS
+- Database: SQL, NoSQL
+- Tools: Git, Docker, CI/CD
+
+EDUCATION:
+- Bachelor's degree in Computer Science or related field
+
+This is a placeholder resume. Please upload your actual resume for personalized analysis.`;
+      formData.append('resume_text', fallbackResumeText);
     }
 
     const response = await this.makeRequest<JobAnalysisResponse>({
@@ -427,13 +451,16 @@ export class CareerCraftApiService {
    * Get analysis results
    */
   public async getAnalysisResults(analysisId: string): Promise<AnalysisResults> {
+    console.log('ApiService: Getting analysis results for:', analysisId);
     const endpoint = ApiEndpoints.ANALYSIS_RESULTS.replace('{analysis_id}', analysisId);
+    console.log('ApiService: Requesting endpoint:', endpoint);
     
     const response = await this.makeRequest<AnalysisResults>({
       method: 'GET',
       endpoint,
     });
 
+    console.log('ApiService: Response received:', response);
     return response.data;
   }
 
